@@ -1,0 +1,17 @@
+{% extends './base.html' %}
+{% load bootstrap3 %}
+
+{% block title %} Service
+{% endblock title %}
+
+{% block header %}
+    <h2>Usługa: {{ service }}</h2>
+{% endblock header %}
+
+{% block content %}
+    <p>{{ service.name }}</p>
+    <p>{{ service.duration }}</p>
+    <p>{{ service.price }}</p>
+    <p>{{ service.description }}</p>
+
+{% endblock content %}

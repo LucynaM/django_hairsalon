@@ -1,0 +1,29 @@
+{% extends './base.html' %}
+{% load bootstrap3 %}
+
+{% block title %} Staff
+{% endblock title %}
+
+{% block header %}
+    <h2>Pracownicy</h2>
+{% endblock header %}
+
+{% block content %}
+    <table class="table">
+        <tr>
+            <th>Pracownik</th>
+            <th>Email</th>
+            <th>Phone</th>
+        </tr>
+    {% for staff in staff_list %}
+        <tr>
+            <td>{{ staff }}</td>
+            <td>{{ staff.email }}</td>
+            <td>{{ staff.phone }}</td>
+        </tr>
+    {% empty %}
+        <p>Brak usług</p>
+    {% endfor %}
+    </table>
+
+{% endblock content %}

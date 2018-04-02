@@ -1,0 +1,62 @@
+{% load bootstrap3 %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+            {% bootstrap_css %}
+            {% bootstrap_javascript %}
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-static-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="{% url 'salon:service-list' %}">services</a></li>
+                <li><a href="">haircuts</a></li>
+                <li><a href="">search</a></li>
+              </ul>
+
+              <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li><a>Witaj {{ user }}</a></li>
+                <li><a href="{% url 'salon:logout' %}">logout</a></li>
+                {% else %}
+                <li><a href="{% url 'salon:login' %}">login</a></li>
+                <li><a href="{% url 'salon:customer-add' %}">signup</a></li>
+                {% endif %}
+              </ul>
+
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                    <div class="page-header">
+                    {% block header %}{% endblock header %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                    <div class="page-header">
+                    {% block content %}{% endblock content %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+{% extends './base.html' %}
+{% load bootstrap3 %}
+
+{% block title %} Service
+{% endblock title %}
+
+{% block header %}
+    <h2>Rezerwuj: </h2>
+{% endblock header %}
+
+{% block content %}
+    <p>{{ reservation_date|date:"D d M Y" }} {{ reservation_date|time:"H:i" }} fryzjer: {{ staff }}</p>
+
+    <form action="" method="post">
+    {% csrf_token %}
+        <input type="submit" name="submit" value="send">
+    </form>
+
+    {% if haircut %}
+    <p>Done</p>
+    {% endif %}
+{% endblock content %}
