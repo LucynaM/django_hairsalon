@@ -139,7 +139,7 @@ class CustomerCreate(View):
     def get(self, request):
         form = CustomerForm()
         ctx = {'form': form,}
-        return render(request, 'salon/customer_form.html', ctx)
+        return render(request, 'salon/_customer_form_main.html', ctx)
 
     def post(self, request):
         form = CustomerForm(request.POST)
@@ -147,11 +147,11 @@ class CustomerCreate(View):
             form.cleaned_data.pop('password2')
             user = MyUser.objects.create_user(**form.cleaned_data)
             login(request, user)
-            return redirect('salon:myuser-detail', pk=user.pk)
+            return redirect('salon:search')
         ctx = {
             'form': form,
         }
-        return render(request, 'customer_form.html', ctx)
+        return render(request, 'salon/_customer_form_main.html', ctx)
 
 
 class CustomerUpdate(View):
@@ -243,7 +243,7 @@ class LoginView(View):
         ctx = {
             'form': form
         }
-        return render(request, 'salon/login.html', ctx)
+        return render(request, 'salon/_login.html', ctx)
 
     def post(self, request):
         form = LoginForm(request.POST)
@@ -255,7 +255,7 @@ class LoginView(View):
                 if request.GET.get('next'):
                     return redirect(request.GET.get('next'))
                 else:
-                    return redirect('salon:myuser-detail', pk=request.user.pk)
+                    return redirect('salon:search')
             else:
                 msg = "błędny użytkownik lub hasło"
 
@@ -263,7 +263,7 @@ class LoginView(View):
             'form': form,
             'msg': msg,
         }
-        return render(request, 'salon/login.html', ctx)
+        return render(request, 'salon/_login.html', ctx)
 
 
 def logout_user(request):
@@ -274,11 +274,14 @@ def logout_user(request):
 class SearchView(LoginRequiredMixin, View):
 
     def get(self, request):
+        user = MyUser.objects.get(pk=request.user.id)
+        haircuts = Haircut.objects.filter(customer=user).exclude(date__lte=datetime.now())
         form = SearchForm()
         ctx = {
+            'haircuts': haircuts,
             'form': form,
         }
-        return render(request, 'salon/search.html', ctx)
+        return render(request, 'salon/_search.html', ctx)
 
     def post(self, request):
         form = SearchForm(request.POST)
@@ -346,7 +349,7 @@ class SearchView(LoginRequiredMixin, View):
             'result': result,
             'service': service,
         }
-        return render(request, 'salon/search.html', ctx)
+        return render(request, 'salon/_search.html', ctx)
 
 
 class ReservationView(LoginRequiredMixin, View):
@@ -374,3 +377,15 @@ class ReservationView(LoginRequiredMixin, View):
         }
 
         return render(request, 'salon/reservation.html', ctx)
+
+
+class MainPage(View):
+    # serve main page info
+    def get(self, request):
+        staff_list = MyUser.objects.filter(is_staff=True)
+        service_list = Service.objects.all()
+        ctx = {
+            'staff_list': staff_list,
+            'service_list': service_list,
+        }
+        return render(request, 'salon/_main-page.html', ctx)

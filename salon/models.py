@@ -58,7 +58,7 @@ class Haircut(models.Model):
     info = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return '{}: {}'.format(self.staff.name, self.date.strftime('%d.%m.%Y %H:%M'))
+        return '{}: {}'.format(self.staff.name or self.staff.username, self.date.strftime('%d.%m.%Y %H:%M'))
 
 
 class Absence(models.Model):

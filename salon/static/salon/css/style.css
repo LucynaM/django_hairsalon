@@ -1,0 +1,138 @@
+
+#header, #login, #search {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100vw;
+    height: 100vh;
+}
+#header {
+    background-image: url("../images/friseur-1.jpg");
+    position: relative;
+    text-align: center;
+}
+#logo {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    bottom: 5vh;
+}
+#logo img {
+    width: 45vw;
+    height: auto;
+}
+
+
+#search {
+    background-image: url("../images/friseur-9.jpg");
+}
+
+#about {
+    position: relative;
+    text-align: center;
+    height: 50vh;
+
+}
+
+.about-content {
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.row.no-gutters > [class^="col-"],
+.row.no-gutters > [class*=" col-"] {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.staff-img, .contact-img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+}
+
+.staff-img.staff1 {
+    background-image: url("../images/friseur-3.jpg");
+}
+.staff-img.staff2 {
+    background-image: url("../images/friseur-4.jpg");
+}
+.staff-img.staff3 {
+    background-image: url("../images/friseur-5.jpg");
+}
+.contact-img {
+    background-image: url("../images/friseur-2-7-1.jpg");
+}
+
+.staff-data, .contact-data {
+    position: relative;
+    text-align: center;
+    height: 100vh;
+    background-color: #F7F5F5;
+}
+
+.staff-content, .contact-content {
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.table {
+    margin: 15vh 0;
+}
+
+
+/*Login - start*/
+
+#login {
+    background-image: url("../images/AdobeStock_112680206_Preview.jpeg");
+}
+
+.login-relative {
+    height: 100vh;
+    position: relative;
+}
+
+.login-absolute {
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.form-header {
+    font-size: 0px;
+}
+
+.form-switch {
+    font-size: initial;
+    display: inline-block;
+    width: 50%;
+    padding: 15px 25px;
+    color: black;
+}
+
+.form-header-active {
+    background-color: white;
+}
+.form-header-inactive {
+    background-color: #F7F5F5;
+    box-shadow: 5px 10px 20px lightgray inset;
+}
+
+
+.white-backgr {
+    background-color: rgba(255, 255, 255, 1);
+    padding: 45px 25px;
+}
+/*Login - stop*/

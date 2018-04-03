@@ -1,0 +1,128 @@
+{% extends './_base.html' %}
+
+        {% block nav %}
+        <!--Navigation - start -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="#about">o nas</a></li>
+                <li><a href="#services">usługi</a></li>
+                <li><a href="#contact">kontakt</a></li>
+              </ul>
+
+              <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li><a>witaj {{ user }}</a></li>
+                <li><a href="{% url 'salon:logout' %}">wylogowanie</a></li>
+                {% else %}
+                <li><a href="{% url 'salon:login' %}">umów wizytę</a></li>
+                {% endif %}
+              </ul>
+
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
+        <!--Navigation - stop -->
+        {% endblock nav %}
+        {% block content %}
+        <!--Header - start -->
+        <section id="header">
+            <div id="logo">
+                <img src="../../static/salon/images/logotyp.svg" alt="">
+            </div>
+        </section>
+        <!--Header - stop -->
+
+        <!--About - start -->
+        <section id="about">
+            <div class="about-content">
+                <h1>Hair salon</h1>
+                <h3>salon fryzjerski dla każdego, profesjonalni fryzjerzy, niebanalne pomysły, zmysł artystyczny</h3>
+            </div>
+        </section>
+        <!--About - stop -->
+
+        <!--Staff - start -->
+        <section id="staff">
+            <div class="container-fluid">
+                <div class="row no-gutters staff-row">
+                    <div class="col-sm-6 staff-img staff1"></div>
+                    <div class="col-sm-6 staff-data staff1">
+                        <div class="staff-content">
+                            <h3>{{ staff_list.0|title }}</h3>
+                            <p>{{ staff_list.0.about }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters staff-row">
+                    <div class="col-sm-6 staff-data staff2">
+                        <div class="staff-content">
+                            <h3>{{ staff_list.1|title }}</h3>
+                            <p>{{ staff_list.1.about }}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 staff-img staff2"></div>
+                </div>
+                <div class="row no-gutters staff-row">
+                    <div class="col-sm-6 staff-img staff3"></div>
+                    <div class="col-sm-6 staff-data staff3">
+                        <div class="staff-content">
+                            <h3>{{ staff_list.2|title }}</h3>
+                            <p>{{ staff_list.2.about }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--Staff - stop -->
+
+        <!--Services - start -->
+        <section id="services">
+            <div class="container">
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services">
+                            <table class="table">
+                                <tr>
+                                    <th>Usługa</th>
+                                    <th>Cena</th>
+                                </tr>
+                            {% for service in service_list %}
+                                <tr>
+                                    <td>{{ service }}</td>
+                                    <td>{{ service.price|floatformat:2 }}</td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>>
+        </section>
+        <!--Services - stop -->
+        <!--Contact - start -->
+        <section id="contact">
+            <div class="container-fluid">
+                <div class="row no-gutters contact-row">
+                    <div class="col-sm-6 contact-data">
+                        <div class="contact-content">
+                            <h3>Adres</h3>
+                            <p>Kontakt</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 contact-img"></div>
+                </div>
+            </div>
+        </section>
+        <!--Contact - stop -->
+        {% endblock content %}

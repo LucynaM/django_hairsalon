@@ -3,7 +3,8 @@ from .views import ServiceCreate, ServiceDelete, ServiceDetail, ServiceList, Ser
     AbsenceCreate, AbsenceDelete, AbsenceDetail, AbsenceList, AbsenceUpdate, \
     HolidayCreate, HolidayDelete, HolidayDetail, HolidayList, HolidayUpdate, \
     CustomerCreate, CustomerUpdate, StaffList, StaffUpdate, StaffCreate, UserDelete, UserDetail, \
-    LoginView, logout_user, SearchView, ReservationView
+    LoginView, logout_user, SearchView, ReservationView, \
+    MainPage
 
 urlpatterns = [
     url(r'^services/?$', ServiceList.as_view(), name='service-list'),
@@ -33,4 +34,6 @@ urlpatterns = [
     url(r'^search/$', SearchView.as_view(), name='search'),
     url(r'^reserve/(?P<date>([a-zA-Z0-9\-:])+)/(?P<user>(\d)+)/(?P<service_id>(\d)+)/$', ReservationView.as_view(),
         name='reservation'),
+    # new urls
+    url(r'^main/$', MainPage.as_view(), name='main'),
 ]
