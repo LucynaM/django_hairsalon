@@ -1,21 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import MyUser, Service, Haircut, Holiday, Comment, Absence
+from .models import MyUser, Service, Haircut, Holiday, Comment, Absence, NonOnlineCustomer
 from .dates_handling import get_dates
-
-
-class HolidayForm(forms.ModelForm):
-    class Meta:
-        model = Holiday
-        fields = '__all__'
-        widgets = {
-            'day': forms.DateInput(attrs={'type': 'date'}),
-        }
-
-class AbsenceForm(forms.Form):
-    start = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    end = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True))
 
 
 class CustomerForm(forms.ModelForm):
@@ -37,7 +23,10 @@ class CustomerForm(forms.ModelForm):
 class StaffForm(CustomerForm):
     class Meta:
         model = MyUser
-        fields = ['username', 'password', 'password2', 'first_name', 'last_name', 'email', 'phone']
+        fields = ['username', 'password', 'password2', 'first_name', 'last_name', 'email', 'phone', 'about']
+        widgets = {
+            'about': forms.Textarea(attrs={'cols': 80}),
+        }
 
 
 class CustomerUpdateForm(forms.ModelForm):
@@ -49,7 +38,10 @@ class CustomerUpdateForm(forms.ModelForm):
 class StaffUpdateForm(forms.ModelForm):
     class Meta:
         model = MyUser
-        fields = ['username', 'first_name', 'last_name', 'email', 'phone']
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone', 'about']
+        widgets = {
+            'about': forms.Textarea(attrs={'cols': 80}),
+        }
 
 
 
@@ -66,7 +58,6 @@ HOURS = (
 
 
 class SearchForm(forms.ModelForm):
-
     dates = forms.IntegerField(widget=forms.Select(choices=get_dates()))
     hours = forms.IntegerField(widget=forms.Select(choices=HOURS))
     staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False)
@@ -74,3 +65,38 @@ class SearchForm(forms.ModelForm):
     class Meta:
         model = Haircut
         fields = ['service', 'staff', 'dates', 'hours']
+
+
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        model = NonOnlineCustomer
+        fields = '__all__'
+
+
+
+# service admin management
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Service
+        fields = '__all__'
+        widgets = {
+            'description': forms.Textarea(),
+        }
+
+
+# holiday admin management
+class HolidayForm(forms.ModelForm):
+    class Meta:
+        model = Holiday
+        fields = '__all__'
+        widgets = {
+            'day': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+# absence admin management
+class AbsenceForm(forms.Form):
+    start = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
+    end = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
+    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True))
+

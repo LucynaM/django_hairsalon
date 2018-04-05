@@ -1,11 +1,14 @@
 
-#header, #login, #search {
+#header, #login {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     width: 100vw;
     height: 100vh;
 }
+
+
+
 #header {
     background-image: url("../images/friseur-1.jpg");
     position: relative;
@@ -16,17 +19,13 @@
     left: 0px;
     right: 0px;
     margin: auto;
-    bottom: 5vh;
+    bottom: 15vh;
 }
 #logo img {
-    width: 45vw;
+    width: 15vw;
     height: auto;
 }
 
-
-#search {
-    background-image: url("../images/friseur-9.jpg");
-}
 
 #about {
     position: relative;
@@ -86,7 +85,7 @@
     transform: translateY(-50%);
 }
 
-.table {
+.services table, #result table {
     margin: 15vh 0;
 }
 
@@ -130,9 +129,17 @@
     box-shadow: 5px 10px 20px lightgray inset;
 }
 
-
 .white-backgr {
-    background-color: rgba(255, 255, 255, 1);
+    background-color: white;
     padding: 45px 25px;
 }
+
+
+#reserved {
+    margin-bottom: 0px;
+}
 /*Login - stop*/
+
+.jumbotron {
+    background-color: #F7F5F5;
+}

@@ -4,7 +4,7 @@
 {% block nav %}{% endblock nav %}
 
 {% block content %}
-    <!--Login - start -->
+    <!--Signup - start -->
     <section id="login">
             <div class="container">
                 <div class="row">
@@ -13,8 +13,8 @@
                             <div class="page-header login-absolute">
 
                                 <div class="form-header">
-                                    <div class="form-switch form-header-active"><a href="">logowanie</a></div>
-                                    <div class="form-switch form-header-inactive"><a href="{% url 'salon:customer-add' %}">rejestracja</a></div>
+                                    <div class="form-switch form-header-inactive"><a href="{% url 'salon:login' %}">logowanie</a></div>
+                                    <div class="form-switch form-header-active"><a href="">rejestracja</a></div>
                                 </div>
 
                                 <form action="" method="post" class="white-backgr">
@@ -28,6 +28,6 @@
                 </div>
             </div>
         </section>
-    <!--Login - stop -->
+    <!--Signup - stop -->
 
 {% endblock content %}

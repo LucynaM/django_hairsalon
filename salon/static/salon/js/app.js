@@ -1,3 +1,4 @@
 $(document).ready(function(){
-    console.log('działam')
+    console.log('działam');
+
 });

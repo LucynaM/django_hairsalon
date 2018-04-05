@@ -1,19 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import detail
-from django.views.generic import list
-from django.views.generic import edit
 from django.http import Http404
 
 from datetime import datetime
 
 from .forms import HolidayForm, AbsenceForm, CustomerForm, StaffForm, CustomerUpdateForm, StaffUpdateForm, LoginForm, \
-    SearchForm
-from .models import MyUser, Service, Haircut, Absence, Holiday
-from .dates_handling import get_absences, get_haircuts, get_user_calendar, return_date
+    SearchForm, ServiceForm, HolidayForm, ReservationForm
+from .models import MyUser, Service, Haircut, Absence, Holiday, NonOnlineCustomer
+from .dates_handling import get_absences, get_absence_days, get_haircuts, get_user_calendar, return_date
 
 
 def check_user(obj, request):
@@ -26,213 +22,16 @@ class AdminUserPassesTestMixin(UserPassesTestMixin):
         return self.request.user.is_superuser
 
 
-class ServiceList(list.ListView):
-    model = Service
-
-
-class ServiceDetail(detail.DetailView):
-    model = Service
-
-
-class ServiceCreate(AdminUserPassesTestMixin, edit.CreateView):
-    model = Service
-    fields = '__all__'
-    #
-    # def test_func(self):
-    #     return self.request.user.is_superuser
-
-
-class ServiceUpdate(AdminUserPassesTestMixin, edit.UpdateView):
-    model = Service
-    fields = '__all__'
-
-
-class ServiceDelete(AdminUserPassesTestMixin, edit.DeleteView):
-    model = Service
-    success_url = reverse_lazy('salon:service-list')
-    
-    
-class AbsenceList(AdminUserPassesTestMixin, View):
-    def get(self, request):
-        absence_list = Absence.objects.filter(end__gte=datetime.now().date())
-        ctx = {'absence_list': absence_list}
-        return render(request, 'salon/absence_list.html', ctx)
-
-
-class AbsenceDetail(AdminUserPassesTestMixin, detail.DetailView):
-    model = Absence
-
-
-class AbsenceCreate(AdminUserPassesTestMixin, View):
-
-    def get(self, request):
-        form = AbsenceForm()
-        ctx = {'form': form}
-        return render(request, 'salon/absence_form.html', ctx)
-
-    def post(self, request):
-        form = AbsenceForm(request.POST)
-        if form.is_valid():
-            absence = Absence.objects.create(**form.cleaned_data)
-            print(absence)
-            return redirect('salon:absence-detail', pk=absence.pk)
-
-        ctx = {'form': form}
-        return render(request, 'salon/absence_form.html', ctx)
-
-
-class AbsenceUpdate(AdminUserPassesTestMixin, View):
-
-    def get(self, request, pk):
-        absence = Absence.objects.get(pk=pk)
-        print(absence)
-        form = AbsenceForm(initial={'start': absence.start,
-                                    'end': absence.end,
-                                    'staff': absence.staff})
-        ctx = {'form': form}
-        return render(request, 'salon/absence_update_form.html', ctx)
-
-    def post(self, request, pk):
-        form = AbsenceForm(request.POST)
-        if form.is_valid():
-            Absence.objects.filter(pk=pk).update(**form.cleaned_data)
-            return redirect('salon:absence-detail', pk=pk)
-
-        ctx = {'form': form}
-        return render(request, 'salon/absence_form.html', ctx)
-
-
-class AbsenceDelete(AdminUserPassesTestMixin, edit.DeleteView):
-    model = Absence
-    success_url = reverse_lazy('salon:absence-list')
-
-    
-class HolidayList(AdminUserPassesTestMixin, View):
-    def get(self, request):
-        holiday_list = Holiday.objects.filter(day__gte=datetime.now())
-        ctx = {'holiday_list': holiday_list}
-        return render(request, 'salon/holiday_list.html', ctx)
-
-
-class HolidayDetail(AdminUserPassesTestMixin, detail.DetailView):
-    model = Holiday
-
-
-class HolidayCreate(AdminUserPassesTestMixin, edit.CreateView):
-    form_class = HolidayForm
-    model = Holiday
-
-
-class HolidayUpdate(AdminUserPassesTestMixin, edit.UpdateView):
-    model = Holiday
-    fields = '__all__'
-
-
-class HolidayDelete(AdminUserPassesTestMixin, edit.DeleteView):
-    model = Holiday
-    success_url = reverse_lazy('salon:holiday-list')
-
-
-class CustomerCreate(View):
-    """Sign up new customer"""
-
-    def get(self, request):
-        form = CustomerForm()
-        ctx = {'form': form,}
-        return render(request, 'salon/_customer_form_main.html', ctx)
-
-    def post(self, request):
-        form = CustomerForm(request.POST)
-        if form.is_valid():
-            form.cleaned_data.pop('password2')
-            user = MyUser.objects.create_user(**form.cleaned_data)
-            login(request, user)
-            return redirect('salon:search')
-        ctx = {
-            'form': form,
-        }
-        return render(request, 'salon/_customer_form_main.html', ctx)
-
-
-class CustomerUpdate(View):
-    """Update user"""
-
-    def get(self, request, pk):
-        customer = MyUser.objects.get(pk=pk)
-        check_user(customer, request)
-        form = CustomerUpdateForm(instance=customer)
-        ctx = {'form': form,}
-        return render(request, 'salon/customer_update_form.html', ctx)
-
-    def post(self, request, pk):
-        customer = MyUser.objects.get(pk=pk)
-        form = CustomerUpdateForm(request.POST, instance=customer)
-        if form.is_valid():
-            form.save()
-            return redirect('salon:myuser-detail', pk=pk)
-        ctx = {
-            'form': form,
-        }
-        return render(request, 'salon/customer_update_form.html', ctx)
-
-
-class StaffList(View):
+class MainPage(View):
+    # serve main page info
     def get(self, request):
         staff_list = MyUser.objects.filter(is_staff=True)
-        ctx = {'staff_list': staff_list}
-        return render(request, 'salon/staff_list.html', ctx)
-
-
-class StaffCreate(AdminUserPassesTestMixin, View):
-    """Create staff"""
-
-    def get(self, request):
-        form = StaffForm()
-        ctx = {'form': form,}
-        return render(request, 'salon/staff_form.html', ctx)
-
-    def post(self, request):
-        form = CustomerForm(request.POST)
-        if form.is_valid():
-            form.cleaned_data.pop('password2')
-            form.cleaned_data['is_staff'] = True
-            user = MyUser.objects.create_user(**form.cleaned_data)
-            return redirect('salon:myuser-detail', pk=user.pk)
+        service_list = Service.objects.all()
         ctx = {
-            'form': form,
+            'staff_list': staff_list,
+            'service_list': service_list,
         }
-        return render(request, 'staff_form.html', ctx)
-
-
-
-class StaffUpdate(AdminUserPassesTestMixin, View):
-    """Update user"""
-
-    def get(self, request, pk):
-        staff = MyUser.objects.get(pk=pk)
-        form = StaffUpdateForm(instance=staff)
-        ctx = {'form': form,}
-        return render(request, 'salon/staff_update_form.html', ctx)
-
-    def post(self, request, pk):
-        staff = MyUser.objects.get(pk=pk)
-        form = StaffUpdateForm(request.POST, instance=staff)
-        if form.is_valid():
-            form.save()
-            return redirect('salon:myuser-detail', pk=pk)
-        ctx = {
-            'form': form,
-        }
-        return render(request, 'salon/staff_update_form.html', ctx)
-
-
-class UserDetail(detail.DetailView):
-    model = MyUser
-
-
-class UserDelete(edit.DeleteView):
-    model = MyUser
-    success_url = reverse_lazy('salon:myuser-list')
+        return render(request, 'salon/main.html', ctx)
 
 
 class LoginView(View):
@@ -243,7 +42,7 @@ class LoginView(View):
         ctx = {
             'form': form
         }
-        return render(request, 'salon/_login.html', ctx)
+        return render(request, 'salon/login.html', ctx)
 
     def post(self, request):
         form = LoginForm(request.POST)
@@ -255,6 +54,7 @@ class LoginView(View):
                 if request.GET.get('next'):
                     return redirect(request.GET.get('next'))
                 else:
+                    # if user.is_superuser redirect to salon:admin
                     return redirect('salon:search')
             else:
                 msg = "błędny użytkownik lub hasło"
@@ -263,12 +63,12 @@ class LoginView(View):
             'form': form,
             'msg': msg,
         }
-        return render(request, 'salon/_login.html', ctx)
+        return render(request, 'salon/login.html', ctx)
 
 
 def logout_user(request):
     logout(request)
-    return redirect('salon:login')
+    return redirect('salon:main')
 
 
 class SearchView(LoginRequiredMixin, View):
@@ -281,7 +81,7 @@ class SearchView(LoginRequiredMixin, View):
             'haircuts': haircuts,
             'form': form,
         }
-        return render(request, 'salon/_search.html', ctx)
+        return render(request, 'salon/search.html', ctx)
 
     def post(self, request):
         form = SearchForm(request.POST)
@@ -335,30 +135,30 @@ class SearchView(LoginRequiredMixin, View):
                                                         end_hour,
                                                         service_duration)
 
-            print(user_calendar)
+            # split user_calendar into tuples (user, date) in order to order it by dates
             result = []
             for key, value in user_calendar.items():
                 for date in value:
                     result.append((key, date))
             result = sorted(result, key=lambda date: date[1])
-            print(result)
-
 
         ctx = {
             'form': form,
             'result': result,
             'service': service,
         }
-        return render(request, 'salon/_search.html', ctx)
+        return render(request, 'salon/search.html', ctx)
 
 
 class ReservationView(LoginRequiredMixin, View):
 
     def get(self, request, date, user, service_id):
+        form = ReservationForm()
         reservation_date = return_date(date)
         staff = MyUser.objects.get(pk=user)
         service = Service.objects.get(pk=service_id)
         ctx = {
+            'form': form,
             'reservation_date': reservation_date,
             'staff': staff,
             'service': service,
@@ -367,25 +167,316 @@ class ReservationView(LoginRequiredMixin, View):
         return render(request, 'salon/reservation.html', ctx)
 
     def post(self, request, date, user, service_id):
-        reservation_date = return_date(date)
-        staff = MyUser.objects.get(pk=user)
-        customer = MyUser.objects.get(pk=request.user.id)
-        service = Service.objects.get(pk=service_id)
-        haircut = Haircut.objects.create(date=reservation_date, staff=staff, customer=customer, service=service)
+
+        new_haircut = {}
+        new_haircut['date'] = return_date(date)
+        new_haircut['staff'] = MyUser.objects.get(pk=user)
+        new_haircut['customer'] = MyUser.objects.get(pk=request.user.id)
+        new_haircut['service'] = Service.objects.get(pk=service_id)
+        form = ReservationForm(request.POST)
+        if form.is_valid():
+            non_online_customer = form.save()
+            new_haircut['non_online_customer'] = non_online_customer
+
+        Haircut.objects.create(**new_haircut)
+
+        return redirect('salon:search')
+
+
+class CustomerDelete(View):
+
+    def get(self, request, pk):
+        user = MyUser.objects.get(pk=pk)
+        check_user(user, request)
+        ctx = {
+            'user': user,
+        }
+        return render(request, 'salon/customer_delete.html', ctx)
+
+    def post(self, request, pk):
+        user = MyUser.objects.get(pk=pk)
+        user.delete()
+        return redirect('salon:main')
+
+
+class CustomerCreate(View):
+    """Sign up new customer"""
+
+    def get(self, request):
+        form = CustomerForm()
+        ctx = {'form': form,}
+        return render(request, 'salon/customer_add.html', ctx)
+
+    def post(self, request):
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.cleaned_data.pop('password2')
+            user = MyUser.objects.create_user(**form.cleaned_data)
+            login(request, user)
+            return redirect('salon:search')
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/customer_add.html', ctx)
+
+
+class CustomerUpdate(View):
+    """Update user"""
+
+    def get(self, request, pk):
+        customer = MyUser.objects.get(pk=pk)
+        check_user(customer, request)
+        form = CustomerUpdateForm(instance=customer)
+        ctx = {'form': form,}
+        return render(request, 'salon/customer_edit.html', ctx)
+
+    def post(self, request, pk):
+        customer = MyUser.objects.get(pk=pk)
+        form = CustomerUpdateForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            return redirect('salon:search')
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/customer_edit.html', ctx)
+
+
+# services admin management
+
+
+class SeviceListAdd(AdminUserPassesTestMixin, View):
+    def get(self, request):
+        service_list = Service.objects.all()
+        form = ServiceForm()
+        ctx = {
+            'service_list': service_list,
+            'form': form,
+               }
+        return render(request, 'salon/service.html', ctx)
+
+    def post(self, request):
+        form = ServiceForm(request.POST)
+        if form.is_valid():
+            service = Service.objects.create(**form.cleaned_data)
+        service_list = Service.objects.all()
+        ctx = {
+            'service_list': service_list,
+            'form': form,
+        }
+        return render(request, 'salon/service.html', ctx)
+
+
+class ServiceEditDelete(AdminUserPassesTestMixin, View):
+    def get(self, request, pk):
+        service = Service.objects.get(pk=pk)
+        form = ServiceForm(instance=service)
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/service_edit.html', ctx)
+
+    def post(self, request, pk):
+        service = Service.objects.get(pk=pk)
+        form = ServiceForm(request.POST, instance=service)
+        if form.is_valid():
+            if request.POST['submit'] == 'edit':
+                form.save()
+            elif request.POST['submit'] == 'delete':
+                service.delete()
+            return redirect('salon:service')
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/service_edit.html', ctx)
+
+
+
+# staff admin management
+
+class StaffListAdd(AdminUserPassesTestMixin, View):
+    """Create, list staff"""
+
+    def get(self, request):
+        staff_list = MyUser.objects.filter(is_staff=True)
+        form = StaffForm()
+        ctx = {
+            'form': form,
+            'staff_list': staff_list,
+        }
+        return render(request, 'salon/staff.html', ctx)
+
+    def post(self, request):
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.cleaned_data.pop('password2')
+            form.cleaned_data['is_staff'] = True
+            MyUser.objects.create_user(**form.cleaned_data)
+        staff_list = MyUser.objects.filter(is_staff=True)
+        ctx = {
+            'form': form,
+            'staff_list': staff_list,
+        }
+        return render(request, 'salon/staff.html', ctx)
+
+
+
+class StaffEditDelete(AdminUserPassesTestMixin, View):
+    """Update user"""
+
+    def get(self, request, pk):
+        staff = MyUser.objects.get(pk=pk)
+        form = StaffUpdateForm(instance=staff)
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/staff_edit.html', ctx)
+
+    def post(self, request, pk):
+        staff = MyUser.objects.get(pk=pk)
+        form = StaffUpdateForm(request.POST, instance=staff)
+        if form.is_valid():
+            if request.POST['submit'] == 'edit':
+                form.save()
+            elif request.POST['submit'] == 'delete':
+                staff.delete()
+            return redirect('salon:staff')
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/staff_edit.html', ctx)
+
+
+# absences admin management
+class AbsenceListAdd(AdminUserPassesTestMixin, View):
+
+    def get(self, request):
+        absence_list = Absence.objects.filter(end__gte=datetime.now().date())
+        form = AbsenceForm()
+        ctx = {
+            'form': form,
+            'absence_list': absence_list,
+           }
+        return render(request, 'salon/absence.html', ctx)
+
+    def post(self, request):
+        form = AbsenceForm(request.POST)
+        if form.is_valid():
+            absence = Absence.objects.create(**form.cleaned_data)
+        # check list of staff haircuts when new absence is added
+        haircuts = Haircut.objects.filter(staff=absence.staff).exclude(date__lte=datetime.now())
+        haircuts_list = []
+        for haircut in haircuts:
+            if haircut.date.date() in get_absence_days(absence):
+                haircuts_list.append(haircut)
+        absence_list = Absence.objects.filter(end__gte=datetime.now().date())
+
+        ctx = {
+            'form': form,
+            'absence_list': absence_list,
+            'haircuts_list': haircuts_list,
+        }
+        return render(request, 'salon/absence.html', ctx)
+
+
+class AbsenceEditDelete(AdminUserPassesTestMixin, View):
+
+    def get(self, request, pk):
+        absence = Absence.objects.get(pk=pk)
+        form = AbsenceForm(initial={'start': absence.start,
+                                    'end': absence.end,
+                                    'staff': absence.staff})
+        ctx = {'form': form}
+        return render(request, 'salon/absence_edit.html', ctx)
+
+    def post(self, request, pk):
+        form = AbsenceForm(request.POST)
+        if form.is_valid():
+            if request.POST['submit'] == 'edit':
+                Absence.objects.filter(pk=pk).update(**form.cleaned_data)
+            elif request.POST['submit'] == 'delete':
+                absence = Absence.objects.get(pk=pk)
+                absence.delete()
+            return redirect('salon:absence')
+
+        ctx = {'form': form}
+        return render(request, 'salon/absence_edit.html', ctx)
+
+
+# holidays admin management
+
+class HolidayListAdd(AdminUserPassesTestMixin, View):
+    def get(self, request):
+        holiday_list = Holiday.objects.filter(day__gte=datetime.now())
+        form = HolidayForm()
+        ctx = {
+            'holiday_list': holiday_list,
+            'form': form,
+               }
+        return render(request, 'salon/holiday.html', ctx)
+
+    def post(self, request):
+        form = HolidayForm(request.POST)
+        if form.is_valid():
+            Holiday.objects.create(**form.cleaned_data)
+        holiday_list = Holiday.objects.filter(day__gte=datetime.now())
+        ctx = {
+            'holiday_list': holiday_list,
+            'form': form,
+        }
+        return render(request, 'salon/holiday.html', ctx)
+
+
+class HolidayEditDelete(AdminUserPassesTestMixin, View):
+    def get(self, request, pk):
+        holiday = Holiday.objects.get(pk=pk)
+        form = HolidayForm(instance=holiday)
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/holiday_edit.html', ctx)
+
+    def post(self, request, pk):
+        holiday = Holiday.objects.get(pk=pk)
+        form = HolidayForm(request.POST, instance=holiday)
+        if form.is_valid():
+            if request.POST['submit'] == 'edit':
+                form.save()
+            elif request.POST['submit'] == 'delete':
+                holiday.delete()
+            return redirect('salon:holiday')
+        ctx = {
+            'form': form,
+        }
+        return render(request, 'salon/holiday_edit.html', ctx)
+
+# haircuts admin management
+
+
+class HaircutDelete(View):
+
+    def get(self, request, pk):
+        haircut = Haircut.objects.get(pk=pk)
+        check_user(haircut.customer, request)
         ctx = {
             'haircut': haircut,
         }
+        return render(request, 'salon/haircut_delete.html', ctx)
 
-        return render(request, 'salon/reservation.html', ctx)
+    def post(self, request, pk):
+        haircut = Haircut.objects.get(pk=pk)
+        haircut.delete()
+        return redirect('salon:search')
 
-
-class MainPage(View):
-    # serve main page info
+class HaircutList(View):
     def get(self, request):
-        staff_list = MyUser.objects.filter(is_staff=True)
-        service_list = Service.objects.all()
+        start = datetime.now().replace(hour=11, minute=00, second=00, microsecond=000000)
+        end = datetime.now().replace(hour=19, minute=00, second=00, microsecond=000000)
+        haircut_list = []
+        for haircut in Haircut.objects.filter(date__range=(start, end)):
+            haircut_list.append(haircut)
         ctx = {
-            'staff_list': staff_list,
-            'service_list': service_list,
+            'haircut_list': haircut_list,
         }
-        return render(request, 'salon/_main-page.html', ctx)
+        return render(request, 'salon/haircut.html', ctx)
+

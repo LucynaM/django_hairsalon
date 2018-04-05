@@ -1,0 +1,58 @@
+{% extends './_base.html' %}
+{% load bootstrap3 %}
+
+{% block navstyling %}
+    navbar-static-top
+{% endblock navstyling %}
+
+{% block links %}
+    <li><a href="{% url 'salon:main' %}">home</a></li>
+    <li><a href="{% url 'salon:service' %}">usługi</a></li>
+    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
+    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
+    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
+    <li><a href="">wizyty</a></li>
+{% endblock links %}
+
+{% block content %}
+        <!--Staff- start -->
+        <section id="staff-admin">
+            <div class="container">
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services">
+                            <table class="table">
+                                <tr>
+                                    <th>Pracownik</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th></th>
+                                </tr>
+                            {% for staff in staff_list %}
+                                <tr>
+                                    <td>{{ staff }}</td>
+                                    <td>{{ staff.email }}</td>
+                                    <td>{{ staff.phone }}</td>
+                                    <td><a href="{% url 'salon:staff-edit' staff.pk %}">edytuj</a></td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="staff jumbotron">
+                            <h2 class="page-header">Dodaj pracownika</h2>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                <input type="submit" name="submit" value="send">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>>
+        </section>
+    <!--Staff - stop -->
+{% endblock content %}

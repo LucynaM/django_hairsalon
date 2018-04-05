@@ -34,6 +34,15 @@ def get_absences(users):
                 absences[user].append(absence.start + datetime.timedelta(days=i))
     return absences
 
+def get_absence_days(absence):
+    # get absence days
+    absences = []
+    day_range = absence.end - absence.start
+    day_range_as_num = day_range.days
+    for i in range(0, day_range_as_num + 1):
+        absences.append(absence.start + datetime.timedelta(days=i))
+    return absences
+
 
 def get_haircuts(users):
     # get staff occupied hours

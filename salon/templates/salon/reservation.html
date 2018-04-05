@@ -1,22 +1,35 @@
-{% extends './base.html' %}
+{% extends './_base.html' %}
 {% load bootstrap3 %}
 
-{% block title %} Service
-{% endblock title %}
+{% block navstyling %}
+    navbar-static-top
+{% endblock navstyling %}
 
-{% block header %}
-    <h2>Rezerwuj: </h2>
-{% endblock header %}
+{% block links %}
+    <li><a href="{% url 'salon:customer-edit' user.id %}">edytuj konto</a></li>
+    <li><a href="{% url 'salon:customer-delete' user.id %}">usuń konto</a></li>
+{% endblock links %}
 
 {% block content %}
-    <p>{{ reservation_date|date:"D d M Y" }} {{ reservation_date|time:"H:i" }} fryzjer: {{ staff }}</p>
+        <!--Reservation- start -->
+        <section id="services-admin">
+            <div class="container">
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services">
+                            <p>{{ reservation_date|date:"D d M Y" }} {{ reservation_date|time:"H:i" }} fryzjer: {{ staff }}</p>
 
-    <form action="" method="post">
-    {% csrf_token %}
-        <input type="submit" name="submit" value="send">
-    </form>
-
-    {% if haircut %}
-    <p>Done</p>
-    {% endif %}
+                            <form action="" method="post">
+                            {% csrf_token %}
+                                {% if user.is_superuser %}
+                                    {% bootstrap_form form %}
+                                {% endif %}
+                                <input type="submit" name="submit" value="send">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>>
+        </section>
+    <!--Reservation - stop -->
 {% endblock content %}

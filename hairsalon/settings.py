@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # other apps
     'bootstrap3',
+
     # my apps
     'salon',
 ]

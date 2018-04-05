@@ -1,0 +1,54 @@
+{% extends './_base.html' %}
+{% load bootstrap3 %}
+
+{% block navstyling %}
+    navbar-static-top
+{% endblock navstyling %}
+
+{% block links %}
+    <li><a href="{% url 'salon:main' %}">home</a></li>
+    <li><a href="{% url 'salon:service' %}">usługi</a></li>
+    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
+    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
+    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
+    <li><a href="">wizyty</a></li>
+{% endblock links %}
+
+{% block content %}
+        <!--Holiday- start -->
+        <section id="holiday-admin">
+            <div class="container">
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services">
+                            <table class="table">
+                                <tr>
+                                    <th>Dzień</th>
+                                </tr>
+                            {% for holiday in holiday_list %}
+                                <tr>
+                                    <td>{{ holiday }}</td>
+                                </tr>
+                            {% empty %}
+                                <p>Brak świąt</p>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services jumbotron">
+                            <h2 class="page-header">Dodaj święto</h2>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                <input type="submit" name="submit" value="send">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>>
+        </section>
+    <!--Holiday - stop -->
+{% endblock content %}

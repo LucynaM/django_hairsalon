@@ -22,7 +22,7 @@
                                         <th>wizyta</th>
                                         <th></th>
                                     </tr>
-                                {% for haircut in haircuts %}
+                                {% for haircut in haircut_list %}
                                     <tr>
                                         <td>{{ haircut }}</td>
                                         <td><a href="{% url 'salon:haircut-delete' haircut.pk %}">odwołaj</a></td>
@@ -30,11 +30,7 @@
                                 {% endfor %}
                                 </table>
                         {% else %}
-                        <form action="" method="post" class="jumbotron">
-                            {% csrf_token %}
-                            {% bootstrap_form form %}
-                            <input type="submit" name="submit" value="send">
-                        </form>
+                        <p>Brak wizyt</p>
                         {% endif %}
                     </div>
                 </div>
@@ -42,33 +38,5 @@
         </section>
     <!--Search - stop -->
 
-
-
-    <!--Search result - start -->
-    <section id="result">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-                    {% if result %}
-                    <table class="table">
-                        <tr>
-                            <th>Data</th>
-                            <th>Fryzjer</th>
-                            <th></th>
-                        </tr>
-                        {% for el in result %}
-                        <tr>
-                            <td>{{ el.1|date:"D d M Y" }} {{ el.1|time:"H:i" }}</td>
-                            <td>{{ el.0 }}</td>
-                            <td><a href="{% url 'salon:reservation' el.1|date:'c' el.0.id service.id %}">rezerwuj</a></td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--Search result - stop -->
 
 {% endblock content %}

@@ -1,0 +1,87 @@
+{% extends './_base.html' %}
+{% load bootstrap3 %}
+
+{% block navstyling %}
+    navbar-static-top
+{% endblock navstyling %}
+
+{% block links %}
+    <li><a href="{% url 'salon:main' %}">home</a></li>
+    <li><a href="{% url 'salon:service' %}">usługi</a></li>
+    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
+    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
+    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
+    <li><a href="">wizyty</a></li>
+{% endblock links %}
+
+{% block content %}
+        <!--Absences- start -->
+        <section id="absence-edit-admin">
+            <div class="container">
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services">
+                            <table class="table">
+                                <tr>
+                                    <th>Nieobecność</th>
+                                    <th>Pracownik</th>
+                                    <th></th>
+                                </tr>
+                            {% for absence in absence_list %}
+                                <tr>
+                                    <td>{{ absence.start|date:"SHORT_DATE_FORMAT" }}-{{ absence.end|date:"SHORT_DATE_FORMAT" }}</td>
+                                    <td>{{ absence.staff }}</td>
+                                    <td><a href="{% url 'salon:absence-edit' absence.pk %}">edytuj</a></td>
+                                </tr>
+                            {% empty %}
+                                <p>Brak nieobecności</p>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services jumbotron">
+                            <h2 class="page-header">Dodaj nieobecność</h2>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                <input type="submit" name="submit" value="send">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% if haircuts_list %}
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services">
+                            <table class="table">
+                                <tr>
+                                    <th>Wizyta</th>
+                                    <th>Klient</th>
+                                    <th>Telefon</th>
+                                    <th></th>
+                                </tr>
+                            {% for haircut in haircuts_list %}
+                                <tr>
+                                    <td>{{ haircut }}</td>
+                                    {% if haircut.customer.is_staff %}
+                                    <td>{{ haircut.non_online_customer.name }}</td>
+                                    <td>{{ haircut.non_online_customer.phone }}</td>
+                                    {% else %}
+                                    <td>{{ haircut.customer }}</td>
+                                    <td>{{ haircut.customer.phone }}</td>
+                                    {% endif %}
+                                    <td><a href="{% url 'salon:haircut-delete' haircut.pk %}">delete</a></td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            </div>
+        </section>
+    <!--Absences - stop -->
+{% endblock content %}

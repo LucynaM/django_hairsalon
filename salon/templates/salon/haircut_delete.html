@@ -1,0 +1,28 @@
+{% extends './_base.html' %}
+{% load bootstrap3 %}
+
+{% block navstyling %}
+    navbar-static-top
+{% endblock navstyling %}
+
+{% block links %}
+    <li><a href="{% url 'salon:customer-edit' user.id %}">edytuj konto</a></li>
+    <li><a href="{% url 'salon:customer-delete' user.id %}">usuń konto</a></li>
+{% endblock links %}
+
+{% block content %}
+    <!--Haircut-delete - start -->
+        <div class="container">
+
+            <div class="row">
+                <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <h2>Czy na pewno usunąć wizytę u fryzjera "{{ haircut }}"?</h2>
+                    <form action="" method="post">{% csrf_token %}
+
+                        <input type="submit" value="Confirm" />
+                    </form>
+                    </div>
+            </div>
+        </div>
+    <!--Haircut-delete - stop -->
+{% endblock content %}
