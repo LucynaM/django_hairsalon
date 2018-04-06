@@ -20,13 +20,13 @@
             <div class="container">
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        <div class="services jumbotron">
+                        <div class="table-margin jumbotron">
                             <h2 class="page-header">Edytuj dane pracownika</h2>
                             <form action="" method="post">
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
-                                <input type="submit" name="submit" value="edit">
-                                <input type="submit" name="submit" value="delete">
+                                <input type="submit" name="submit" value="edit" class="btn btn-primary">
+                                <input type="submit" name="submit" value="delete" class="btn btn-danger">
                             </form>
                         </div>
                     </div>

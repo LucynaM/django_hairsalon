@@ -5,12 +5,15 @@ from .dates_handling import get_dates
 
 
 class CustomerForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-    password2 = forms.CharField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput(), label='Hasło')
+    password2 = forms.CharField(widget=forms.PasswordInput(), label='Powtórzone hasło')
 
     class Meta:
         model = MyUser
         fields = ['username', 'password', 'password2', 'email', 'phone']
+        help_texts = {
+            'username': '',
+        }
 
     def clean(self):
         password1 = self.cleaned_data['password']
@@ -27,12 +30,18 @@ class StaffForm(CustomerForm):
         widgets = {
             'about': forms.Textarea(attrs={'cols': 80}),
         }
+        help_texts = {
+            'username': '',
+        }
 
 
 class CustomerUpdateForm(forms.ModelForm):
     class Meta:
         model = MyUser
         fields = ['username', 'email', 'phone']
+        help_texts = {
+            'username': '',
+        }
 
 
 class StaffUpdateForm(forms.ModelForm):
@@ -42,12 +51,15 @@ class StaffUpdateForm(forms.ModelForm):
         widgets = {
             'about': forms.Textarea(attrs={'cols': 80}),
         }
+        help_texts = {
+            'username': '',
+        }
 
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField(label='Login')
+    password = forms.CharField(widget=forms.PasswordInput(), label='Hasło')
 
 
 HOURS = (
@@ -59,9 +71,9 @@ HOURS = (
 # haircut management
 
 class SearchForm(forms.ModelForm):
-    dates = forms.IntegerField(widget=forms.Select(choices=get_dates()))
-    hours = forms.IntegerField(widget=forms.Select(choices=HOURS))
-    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False)
+    dates = forms.IntegerField(widget=forms.Select(choices=get_dates()), label='Zakres dat')
+    hours = forms.IntegerField(widget=forms.Select(choices=HOURS), label='Godziny')
+    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False, label='Fryzjer')
 
     class Meta:
         model = Haircut
@@ -74,8 +86,8 @@ class ReservationForm(forms.ModelForm):
         fields = '__all__'
 
 class HaircutSearchForm(forms.Form):
-    date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False)
+    date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}), label='Data')
+    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False, label='Fryzjer')
 
 
 # service admin management
@@ -100,7 +112,7 @@ class HolidayForm(forms.ModelForm):
 
 # absence admin management
 class AbsenceForm(forms.Form):
-    start = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    end = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
-    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True))
+    start = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}), label='Początek')
+    end = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}), label='Koniec')
+    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), label='Pracownik')
 

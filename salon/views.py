@@ -16,17 +16,21 @@ def check_user(obj, request):
     if obj != request.user:
         raise Http404
 
+def check_user_or_admin(obj, request):
+    if obj != request.user and not request.user.is_staff:
+        raise Http404
+
 
 class AdminUserPassesTestMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.is_superuser
+        return self.request.user.is_staff
 
 
 class MainPage(View):
     # serve main page info
     def get(self, request):
         staff_list = MyUser.objects.filter(is_staff=True)
-        service_list = Service.objects.all()
+        service_list = Service.objects.all().order_by('name')
         ctx = {
             'staff_list': staff_list,
             'service_list': service_list,
@@ -248,10 +252,9 @@ class CustomerUpdate(View):
 
 # services admin management
 
-
 class SeviceListAdd(AdminUserPassesTestMixin, View):
     def get(self, request):
-        service_list = Service.objects.all()
+        service_list = Service.objects.all().order_by('name')
         form = ServiceForm()
         ctx = {
             'service_list': service_list,
@@ -263,7 +266,7 @@ class SeviceListAdd(AdminUserPassesTestMixin, View):
         form = ServiceForm(request.POST)
         if form.is_valid():
             service = Service.objects.create(**form.cleaned_data)
-        service_list = Service.objects.all()
+        service_list = Service.objects.all().order_by('name')
         ctx = {
             'service_list': service_list,
             'form': form,
@@ -302,7 +305,7 @@ class StaffListAdd(AdminUserPassesTestMixin, View):
     """Create, list staff"""
 
     def get(self, request):
-        staff_list = MyUser.objects.filter(is_staff=True)
+        staff_list = MyUser.objects.filter(is_staff=True).order_by('username')
         form = StaffForm()
         ctx = {
             'form': form,
@@ -316,7 +319,7 @@ class StaffListAdd(AdminUserPassesTestMixin, View):
             form.cleaned_data.pop('password2')
             form.cleaned_data['is_staff'] = True
             MyUser.objects.create_user(**form.cleaned_data)
-        staff_list = MyUser.objects.filter(is_staff=True)
+        staff_list = MyUser.objects.filter(is_staff=True).order_by('username')
         ctx = {
             'form': form,
             'staff_list': staff_list,
@@ -326,7 +329,6 @@ class StaffListAdd(AdminUserPassesTestMixin, View):
 
 
 class StaffEditDelete(AdminUserPassesTestMixin, View):
-    """Update user"""
 
     def get(self, request, pk):
         staff = MyUser.objects.get(pk=pk)
@@ -387,8 +389,8 @@ class AbsenceEditDelete(AdminUserPassesTestMixin, View):
 
     def get(self, request, pk):
         absence = Absence.objects.get(pk=pk)
-        form = AbsenceForm(initial={'start': absence.start,
-                                    'end': absence.end,
+        form = AbsenceForm(initial={'start': absence.start.strftime('%Y-%m-%d'),
+                                    'end': absence.end.strftime('%Y-%m-%d'),
                                     'staff': absence.staff})
         ctx = {'form': form}
         return render(request, 'salon/absence_edit.html', ctx)
@@ -456,14 +458,14 @@ class HolidayEditDelete(AdminUserPassesTestMixin, View):
         }
         return render(request, 'salon/holiday_edit.html', ctx)
 
-# haircuts admin management
 
+# haircuts admin management
 
 class HaircutDelete(View):
 
     def get(self, request, pk):
         haircut = Haircut.objects.get(pk=pk)
-        check_user(haircut.customer, request)
+        check_user_or_admin(haircut.customer, request)
         ctx = {
             'haircut': haircut,
         }
@@ -475,7 +477,7 @@ class HaircutDelete(View):
         return redirect('salon:search')
 
 
-class HaircutList(View):
+class HaircutList(AdminUserPassesTestMixin, View):
 
     def get_day_haircuts(self, start, end, **kwargs):
         haircut_list = []

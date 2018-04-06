@@ -20,7 +20,7 @@
             <div class="container">
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        <div class="services">
+                        <div class="table-margin">
                             <table class="table">
                                 <tr>
                                     <th>Nieobecność</th>
@@ -29,7 +29,7 @@
                                 </tr>
                             {% for absence in absence_list %}
                                 <tr>
-                                    <td>{{ absence.start|date:"SHORT_DATE_FORMAT" }}-{{ absence.end|date:"SHORT_DATE_FORMAT" }}</td>
+                                    <td>{{ absence.start|date:"d.m.y" }}-{{ absence.end|date:"d.m.y" }}</td>
                                     <td>{{ absence.staff }}</td>
                                     <td><a href="{% url 'salon:absence-edit' absence.pk %}">edytuj</a></td>
                                 </tr>
@@ -42,12 +42,12 @@
                 </div>
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        <div class="services jumbotron">
+                        <div class="jumbotron">
                             <h2 class="page-header">Dodaj nieobecność</h2>
                             <form action="" method="post">
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
-                                <input type="submit" name="submit" value="send">
+                                <input type="submit" name="submit" value="send" class="btn btn-primary">
                             </form>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
             {% if haircut_list %}
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        <div class="services">
+                        <div class="table-margin">
                             <table class="table">
                                 <tr>
                                     <th>Wizyta</th>

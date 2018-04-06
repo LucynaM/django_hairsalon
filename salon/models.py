@@ -17,8 +17,8 @@ DURATION = (
 
 class MyUser(AbstractUser):
     email = models.EmailField(unique=True)
-    phone = models.IntegerField(unique=True)
-    about = models.TextField(null=True, blank=True)
+    phone = models.IntegerField(unique=True, verbose_name='Telefon')
+    about = models.TextField(null=True, blank=True, verbose_name='Opis')
 
     REQUIRED_FIELDS = ['email', 'phone']
 
@@ -34,27 +34,27 @@ class MyUser(AbstractUser):
 
 
 class NonOnlineCustomer(models.Model):
-    name = models.CharField(max_length=60)
-    phone = models.IntegerField()
+    name = models.CharField(max_length=60, verbose_name='Imię i nazwisko')
+    phone = models.IntegerField(verbose_name='Telefon')
 
 
 class Service(models.Model):
-    name = models.CharField(max_length=255)
-    price = models.FloatField()
-    duration = models.IntegerField(choices=DURATION)
-    description = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255, verbose_name='Nazwa')
+    price = models.FloatField(verbose_name='Cena')
+    duration = models.IntegerField(choices=DURATION, verbose_name='Czas trwania')
+    description = models.CharField(max_length=255, null=True, blank=True, verbose_name='Opis')
 
     def __str__(self):
         return self.name
 
 
 class Haircut(models.Model):
-    service = models.ForeignKey(Service, related_name='haircuts', on_delete=models.SET_NULL, null=True)
-    staff = models.ForeignKey(MyUser, related_name='services', on_delete=models.SET_NULL, null=True)
-    customer = models.ForeignKey(MyUser, related_name='haircuts', on_delete=models.CASCADE)
-    date = models.DateTimeField()
-    status = models.IntegerField(choices=STATUSES, default=1)
-    info = models.CharField(max_length=255, null=True, blank=True)
+    service = models.ForeignKey(Service, related_name='haircuts', on_delete=models.SET_NULL, null=True, verbose_name='Usługa')
+    staff = models.ForeignKey(MyUser, related_name='services', on_delete=models.SET_NULL, null=True, verbose_name='Fryzjer')
+    customer = models.ForeignKey(MyUser, related_name='haircuts', on_delete=models.CASCADE, verbose_name='Klient')
+    date = models.DateTimeField(verbose_name='Data')
+    status = models.IntegerField(choices=STATUSES, default=1, verbose_name='Status')
+    info = models.CharField(max_length=255, null=True, blank=True, verbose_name='Informacje')
     non_online_customer = models.ForeignKey(NonOnlineCustomer, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
@@ -62,16 +62,16 @@ class Haircut(models.Model):
 
 
 class Absence(models.Model):
-    start = models.DateField()
-    end = models.DateField()
-    staff = models.ForeignKey(MyUser, related_name='absences', on_delete=models.CASCADE)
+    start = models.DateField(verbose_name='Początek')
+    end = models.DateField(verbose_name='Koniec')
+    staff = models.ForeignKey(MyUser, related_name='absences', on_delete=models.CASCADE, verbose_name='Pracownik')
 
     def __str__(self):
         return '{}: {}-{}'.format(self.staff.name or self.staff.username, self.start.strftime('%d.%m.%Y'), self.end.strftime('%d.%m.%Y'))
 
 
 class Holiday(models.Model):
-    day = models.DateField()
+    day = models.DateField(verbose_name='Dzień')
 
     def __str__(self):
         return self.day.strftime('%d.%m.%Y')

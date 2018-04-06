@@ -25,10 +25,10 @@
 
             <div class="row">
                 <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        <h2>Czy na pewno usunąć wizytę u fryzjera "{{ haircut }}"?</h2>
+                        <p>Czy na pewno usunąć wizytę u fryzjera "{{ haircut }}"?</p>
                     <form action="" method="post">{% csrf_token %}
 
-                        <input type="submit" value="Confirm" />
+                        <input type="submit" value="Confirm" class="btn btn-danger">
                     </form>
                     </div>
             </div>

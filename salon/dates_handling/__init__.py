@@ -86,7 +86,7 @@ def get_user_calendar(day_choice,
         if day.date() not in absences[user]:
             for hour_offset in range(start_hour, end_hour):
                 hours.append(day + datetime.timedelta(hours=hour_offset))
-    print(hours)
+
     # return [hour for hour in hours if hour not in haircuts[user] and hour > datetime.datetime.now()]
     return [hour for hour in hours
             if len([True for item in get_hours_needed(service_duration, hour)

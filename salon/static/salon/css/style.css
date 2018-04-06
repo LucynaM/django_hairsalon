@@ -1,4 +1,53 @@
+/*general - start*/
 
+.row.no-gutters > [class^="col-"],
+.row.no-gutters > [class*=" col-"] {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+a, a:hover {
+    color: #357ebd;
+}
+
+.jumbotron {
+    background-color: #F7F5F5;
+}
+
+input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"] {
+    line-height: inherit;
+}
+
+.has-success .control-label,
+.has-success .help-block,
+.has-success .form-control-feedback {
+    color: #357ebd;
+    border-color: #357ebd;
+}
+
+.btn-danger {
+    float: right;
+}
+
+.fa-w-14, .fa-w-16 {
+    margin-right: 10px;
+}
+
+.table-margin {
+    margin: 15vh 0;
+}
+
+th:last-child, td:last-child {
+    text-align: right;
+}
+
+th:first-of-type, td:first-of-type {
+    text-align: left;
+}
+
+/*general - stop*/
+
+/* header - start*/
 #header, #login {
     background-position: center;
     background-size: cover;
@@ -7,13 +56,12 @@
     height: 100vh;
 }
 
-
-
 #header {
-    background-image: url("../images/friseur-1.jpg");
+    background-image: url("../images/main.jpg");
     position: relative;
     text-align: center;
 }
+
 #logo {
     position: absolute;
     left: 0px;
@@ -26,7 +74,9 @@
     height: auto;
 }
 
+/* header - stop */
 
+/* about - start */
 #about {
     position: relative;
     text-align: center;
@@ -42,37 +92,33 @@
     top: 50%;
     transform: translateY(-50%);
 }
+/* about - stop */
 
-.row.no-gutters > [class^="col-"],
-.row.no-gutters > [class*=" col-"] {
-    padding-right: 0;
-    padding-left: 0;
-}
-
+/* staff, contact - start */
 .staff-img, .contact-img {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    height: 100vh;
+    height: 50vh;
 }
 
 .staff-img.staff1 {
-    background-image: url("../images/friseur-3.jpg");
+    background-image: url("../images/main_01.jpg");
 }
 .staff-img.staff2 {
-    background-image: url("../images/friseur-4.jpg");
+    background-image: url("../images/main_04.jpg");
 }
 .staff-img.staff3 {
-    background-image: url("../images/friseur-5.jpg");
+    background-image: url("../images/main_02.jpg");
 }
 .contact-img {
-    background-image: url("../images/friseur-2-7-1.jpg");
+    background-image: url("../images/main_03.jpg");
 }
 
 .staff-data, .contact-data {
     position: relative;
     text-align: center;
-    height: 100vh;
+    height: 50vh;
     background-color: #F7F5F5;
 }
 
@@ -84,16 +130,14 @@
     top: 50%;
     transform: translateY(-50%);
 }
+/* staff, contact - stop */
 
-.services table, #result table {
-    margin: 15vh 0;
-}
 
 
 /*Login - start*/
 
 #login {
-    background-image: url("../images/AdobeStock_112680206_Preview.jpeg");
+    background-image: url("../images/main_05.jpg");
 }
 
 .login-relative {
@@ -109,6 +153,7 @@
     top: 50%;
     transform: translateY(-50%);
 }
+
 .form-header {
     font-size: 0px;
 }
@@ -121,8 +166,15 @@
     color: black;
 }
 
+.form-switch:first-child {
+    border-radius: 6px 0 0 0;
+}
+.form-switch:last-child {
+    border-radius: 0 6px 0 0;
+}
+
 .form-header-active {
-    background-color: white;
+    background-color: #FAF9F9;
 }
 .form-header-inactive {
     background-color: #F7F5F5;
@@ -130,16 +182,13 @@
 }
 
 .white-backgr {
-    background-color: white;
+    background-color: #FAF9F9;
     padding: 45px 25px;
+    border-radius: 0 0 6px 6px;
 }
 
+/*Login - stop*/
 
 #reserved {
     margin-bottom: 0px;
-}
-/*Login - stop*/
-
-.jumbotron {
-    background-color: #F7F5F5;
 }
