@@ -56,6 +56,7 @@ HOURS = (
     (2, 'po 15 godz.'),
 )
 
+# haircut management
 
 class SearchForm(forms.ModelForm):
     dates = forms.IntegerField(widget=forms.Select(choices=get_dates()))
@@ -72,6 +73,9 @@ class ReservationForm(forms.ModelForm):
         model = NonOnlineCustomer
         fields = '__all__'
 
+class HaircutSearchForm(forms.Form):
+    date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
+    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False)
 
 
 # service admin management

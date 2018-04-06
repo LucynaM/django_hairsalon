@@ -6,8 +6,17 @@
 {% endblock navstyling %}
 
 {% block links %}
+    {% if user.is_staff %}
+    <li><a href="{% url 'salon:main' %}">home</a></li>
+    <li><a href="{% url 'salon:service' %}">usługi</a></li>
+    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
+    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
+    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
+    <li><a href="{% url 'salon:haircut' %}">wizyty</a></li>
+    {% else %}
     <li><a href="{% url 'salon:customer-edit' user.id %}">edytuj konto</a></li>
     <li><a href="{% url 'salon:customer-delete' user.id %}">usuń konto</a></li>
+    {% endif %}
 {% endblock links %}
 
 {% block content %}
@@ -16,7 +25,7 @@
             <div class="container">
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        {% if haircuts %}
+                        {% if haircuts and not user.is_staff %}
                                 <table id="reserved" class="table ">
                                     <tr>
                                         <th>wizyta</th>

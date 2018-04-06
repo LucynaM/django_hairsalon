@@ -7,7 +7,7 @@ from django.http import Http404
 from datetime import datetime
 
 from .forms import HolidayForm, AbsenceForm, CustomerForm, StaffForm, CustomerUpdateForm, StaffUpdateForm, LoginForm, \
-    SearchForm, ServiceForm, HolidayForm, ReservationForm
+    SearchForm, ServiceForm, HolidayForm, ReservationForm, HaircutSearchForm
 from .models import MyUser, Service, Haircut, Absence, Holiday, NonOnlineCustomer
 from .dates_handling import get_absences, get_absence_days, get_haircuts, get_user_calendar, return_date
 
@@ -175,7 +175,11 @@ class ReservationView(LoginRequiredMixin, View):
         new_haircut['service'] = Service.objects.get(pk=service_id)
         form = ReservationForm(request.POST)
         if form.is_valid():
-            non_online_customer = form.save()
+            non_online_customer_list = NonOnlineCustomer.objects.filter(**form.cleaned_data)
+            if non_online_customer_list:
+                non_online_customer = non_online_customer_list[0]
+            else:
+                non_online_customer = form.save()
             new_haircut['non_online_customer'] = non_online_customer
 
         Haircut.objects.create(**new_haircut)
@@ -365,16 +369,16 @@ class AbsenceListAdd(AdminUserPassesTestMixin, View):
             absence = Absence.objects.create(**form.cleaned_data)
         # check list of staff haircuts when new absence is added
         haircuts = Haircut.objects.filter(staff=absence.staff).exclude(date__lte=datetime.now())
-        haircuts_list = []
+        haircut_list = []
         for haircut in haircuts:
             if haircut.date.date() in get_absence_days(absence):
-                haircuts_list.append(haircut)
+                haircut_list.append(haircut)
         absence_list = Absence.objects.filter(end__gte=datetime.now().date())
 
         ctx = {
             'form': form,
             'absence_list': absence_list,
-            'haircuts_list': haircuts_list,
+            'haircuts_list': haircut_list,
         }
         return render(request, 'salon/absence.html', ctx)
 
@@ -406,6 +410,7 @@ class AbsenceEditDelete(AdminUserPassesTestMixin, View):
 # holidays admin management
 
 class HolidayListAdd(AdminUserPassesTestMixin, View):
+
     def get(self, request):
         holiday_list = Holiday.objects.filter(day__gte=datetime.now())
         form = HolidayForm()
@@ -428,6 +433,7 @@ class HolidayListAdd(AdminUserPassesTestMixin, View):
 
 
 class HolidayEditDelete(AdminUserPassesTestMixin, View):
+
     def get(self, request, pk):
         holiday = Holiday.objects.get(pk=pk)
         form = HolidayForm(instance=holiday)
@@ -468,15 +474,40 @@ class HaircutDelete(View):
         haircut.delete()
         return redirect('salon:search')
 
+
 class HaircutList(View):
+
+    def get_day_haircuts(self, start, end, **kwargs):
+        haircut_list = []
+        for haircut in Haircut.objects.filter(date__range=(start, end), **kwargs):
+            haircut_list.append(haircut)
+        return haircut_list
+
     def get(self, request):
         start = datetime.now().replace(hour=11, minute=00, second=00, microsecond=000000)
         end = datetime.now().replace(hour=19, minute=00, second=00, microsecond=000000)
-        haircut_list = []
-        for haircut in Haircut.objects.filter(date__range=(start, end)):
-            haircut_list.append(haircut)
+        haircut_list = self.get_day_haircuts(start, end)
+        form = HaircutSearchForm()
         ctx = {
             'haircut_list': haircut_list,
+            'form': form,
+        }
+        return render(request, 'salon/haircut.html', ctx)
+
+    def post(self, request):
+        form = HaircutSearchForm(request.POST)
+        haircut_list = None
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            start = datetime(year=date.year, month=date.month, day=date.day, hour=11, minute=00, second=00, microsecond=000000)
+            end = datetime(year=date.year, month=date.month, day=date.day, hour=19, minute=00, second=00, microsecond=000000)
+            haircut_staff = {}
+            if form.cleaned_data['staff']:
+                haircut_staff = {'staff': form.cleaned_data['staff']}
+            haircut_list = self.get_day_haircuts(start, end, **haircut_staff)
+        ctx = {
+            'haircut_list': haircut_list,
+            'form': form,
         }
         return render(request, 'salon/haircut.html', ctx)
 

@@ -6,32 +6,57 @@
 {% endblock navstyling %}
 
 {% block links %}
-    <li><a href="{% url 'salon:customer-edit' user.id %}">edytuj konto</a></li>
-    <li><a href="{% url 'salon:customer-delete' user.id %}">usuń konto</a></li>
+    <li><a href="{% url 'salon:main' %}">home</a></li>
+    <li><a href="{% url 'salon:service' %}">usługi</a></li>
+    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
+    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
+    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
+    <li><a href="{% url 'salon:haircut' %}">wizyty</a></li>
 {% endblock links %}
 
 {% block content %}
     <!--Search - start -->
     <section id="search">
             <div class="container">
+                {% if haircut_list %}
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        {% if haircuts %}
-                                <table id="reserved" class="table ">
-                                    <tr>
-                                        <th>wizyta</th>
-                                        <th></th>
-                                    </tr>
-                                {% for haircut in haircut_list %}
-                                    <tr>
-                                        <td>{{ haircut }}</td>
-                                        <td><a href="{% url 'salon:haircut-delete' haircut.pk %}">odwołaj</a></td>
-                                    </tr>
-                                {% endfor %}
-                                </table>
-                        {% else %}
-                        <p>Brak wizyt</p>
-                        {% endif %}
+                        <div class="services">
+                            <table class="table">
+                                <tr>
+                                    <th>Wizyta</th>
+                                    <th>Klient</th>
+                                    <th>Telefon</th>
+                                    <th></th>
+                                </tr>
+                            {% for haircut in haircut_list %}
+                                <tr>
+                                    <td>{{ haircut }}</td>
+                                    {% if haircut.customer.is_staff %}
+                                    <td>{{ haircut.non_online_customer.name }}</td>
+                                    <td>{{ haircut.non_online_customer.phone }}</td>
+                                    {% else %}
+                                    <td>{{ haircut.customer }}</td>
+                                    <td>{{ haircut.customer.phone }}</td>
+                                    {% endif %}
+                                    <td><a href="{% url 'salon:haircut-delete' haircut.pk %}">delete</a></td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+                <div class="row">
+                    <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
+                        <div class="services jumbotron">
+                            <h2 class="page-header">Wyszukaj</h2>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                {% bootstrap_form form %}
+                                <input type="submit" name="submit" value="send">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -11,7 +11,7 @@
     <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
     <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
     <li><a href="{% url 'salon:holiday' %}">święta</a></li>
-    <li><a href="">wizyty</a></li>
+    <li><a href="{% url 'salon:haircut' %}">wizyty</a></li>
 {% endblock links %}
 
 {% block content %}
@@ -52,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-            {% if haircuts_list %}
+            {% if haircut_list %}
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
                         <div class="services">
@@ -63,7 +63,7 @@
                                     <th>Telefon</th>
                                     <th></th>
                                 </tr>
-                            {% for haircut in haircuts_list %}
+                            {% for haircut in haircut_list %}
                                 <tr>
                                     <td>{{ haircut }}</td>
                                     {% if haircut.customer.is_staff %}
