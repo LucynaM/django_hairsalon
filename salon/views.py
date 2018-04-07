@@ -3,6 +3,7 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.views import View
 from django.http import Http404
+from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from datetime import datetime
@@ -51,7 +52,7 @@ class LoginView(View):
 
     def post(self, request):
         form = LoginForm(request.POST)
-        msg = ""
+        err_msg = ""
         if form.is_valid():
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
@@ -62,11 +63,11 @@ class LoginView(View):
                     # if user.is_superuser redirect to salon:admin
                     return redirect('salon:search')
             else:
-                msg = "błędny użytkownik lub hasło"
+                err_msg = "błędny użytkownik lub hasło"
 
         ctx = {
             'form': form,
-            'msg': msg,
+            'err_msg': err_msg,
         }
         return render(request, 'salon/login.html', ctx)
 
@@ -254,13 +255,19 @@ class CustomerCreate(View):
 
     def post(self, request):
         form = CustomerForm(request.POST)
+        err_msg = ''
         if form.is_valid():
             form.cleaned_data.pop('password2')
-            user = MyUser.objects.create_user(**form.cleaned_data)
-            login(request, user)
-            return redirect('salon:search')
+            try:
+                user = MyUser.objects.create_user(**form.cleaned_data)
+                login(request, user)
+                return redirect('salon:search')
+            except IntegrityError:
+                err_msg = "Login musi być unikalny"
+
         ctx = {
             'form': form,
+            'err_msg': err_msg,
         }
         return render(request, 'salon/customer_add.html', ctx)
 

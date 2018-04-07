@@ -46,12 +46,21 @@ input[type="date"], input[type="time"], input[type="datetime-local"], input[type
     margin: 15vh 0;
 }
 
+.add-margin {
+    margin: 7vh 0;
+}
+
 th:last-child, td:last-child {
     text-align: right;
 }
 
 th:first-of-type, td:first-of-type {
     text-align: left;
+}
+
+.err-msg {
+    color: red;
+    margin-top: 10px;
 }
 
 /*general - stop*/

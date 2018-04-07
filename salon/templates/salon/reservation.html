@@ -11,10 +11,11 @@
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
                         <div class="table-margin">
                             <h2 class="page-header">Rezerwuj:</h2>
+                            <div class="add-margin">
                             <p><i class="far fa-calendar-alt"></i>{{ reservation_date|date:"D d.m.y" }}</p>
                             <p><i class="far fa-clock"></i>{{ reservation_date|time:"H:i" }}</p>
-                            <p>fryzjer: {{ staff }}</p>
-
+                            <p class="margin-bottom">fryzjer: {{ staff }}</p>
+                            </div>
                             <form action="" method="post">
                             {% csrf_token %}
                                 {% if user.is_superuser %}
