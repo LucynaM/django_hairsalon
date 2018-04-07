@@ -25,11 +25,25 @@
 
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                  {% block links %}
+              <li><a href="{% url 'salon:main' %}">home</a></li>
+              {% block links %}
                 <li><a href="#about">o nas</a></li>
                 <li><a href="#services">usługi</a></li>
                 <li><a href="#contact">kontakt</a></li>
-                  {% endblock links %}
+              {% endblock links %}
+              {% if user.is_staff %}
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">admin<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li class="text-center"><a href="{% url 'salon:service' %}">usługi</a></li>
+                    <li class="text-center"><a href="{% url 'salon:staff' %}">pracownicy</a></li>
+                    <li class="text-center"><a href="{% url 'salon:absence' %}">nieobecności</a></li>
+                    <li class="text-center"><a href="{% url 'salon:holiday' %}">święta</a></li>
+                    <li class="text-center"><a href="{% url 'salon:haircut' %}">wizyty</a></li>
+                  </ul>
+                </li>
+                {% endif %}
+
                 <li><a href="{% if user.is_authenticated %}{% url 'salon:search' %}{% else %}{% url 'salon:login' %}{% endif %}">umów wizytę</a></li>
               </ul>
 
@@ -60,6 +74,7 @@
 
         {% block content %}{% endblock content %}
 
+        <script src="https://unpkg.com/scrollreveal@3.3.2/dist/scrollreveal.min.js"></script>
         <script src="{% static 'salon/js/jquery-3.3.1.min.js' %}"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

@@ -3,6 +3,7 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.views import View
 from django.http import Http404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from datetime import datetime
 
@@ -89,69 +90,105 @@ class SearchView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = SearchForm(request.POST)
-        user_calendar = None
-        service = None
+
         if form.is_valid():
 
-            # pobieramy 0, 1, 2, 3 - reprezentację tygodni, która posłuży do ustawienia dat
             day_choice = form.cleaned_data['dates']
 
-            # pobieramy wolne dni
-            holidays = [holiday.day for holiday in Holiday.objects.all()]
-            # pobieramy zakres godzin i przekuwamy go na dane potrzebne w forze
             hours = form.cleaned_data['hours']
-            start_hour = 0
-            end_hour = 8
-            if hours == 1:
-                start_hour = 0
-                end_hour = 4
-            elif hours == 2:
-                start_hour = 4
-                end_hour = 8
-            # pobieramy fryzjera
+
+            staff_id = 0
             staff = form.cleaned_data['staff']
-            # jeżeli nie wybrano żadnego, pobieramy wszystkich lub zgodnie z wyborem, nastęþnie wrzucamy ich do tablicy
-            staff_selection = []
-            if not staff:
-                staff_selection = [user for user in MyUser.objects.filter(is_staff=True)]
-            else:
-                staff_selection.append(staff)
+            if staff:
+                staff_id = staff.id
 
-            # uruchamiamy funkcję zwracającą słownik z nieobecnościami per fryzjer
-            absences = get_absences(staff_selection)
-
-            # uruchamiamy funkcję zwracającą słownik z godzinami zajętymi per fryzjer
-            haircuts = get_haircuts(staff_selection)
-
-            # czas trwania usługi
             service = form.cleaned_data['service']
-            service_duration = int(service.duration / 60)
 
-            # uruchamiamy funkcję generującą kalendarz
-            user_calendar = {}
-            for user in staff_selection:
-                user_calendar[user] = get_user_calendar(day_choice,
-                                                        holidays,
-                                                        user,
-                                                        absences,
-                                                        haircuts,
-                                                        start_hour,
-                                                        end_hour,
-                                                        service_duration)
-
-            # split user_calendar into tuples (user, date) in order to order it by dates
-            result = []
-            for key, value in user_calendar.items():
-                for date in value:
-                    result.append((key, date))
-            result = sorted(result, key=lambda date: date[1])
-
+            return redirect('salon:search-result', **{
+                    'day_choice': day_choice,
+                    'hours': hours,
+                    'staff_id': staff_id,
+                    'service_id': service.id
+            })
         ctx = {
             'form': form,
+        }
+        return render(request, 'salon/search.html', ctx)
+
+
+class SearchResultView(LoginRequiredMixin, View):
+
+    def get(self, request, day_choice, hours, staff_id, service_id):
+        day_choice = int(day_choice)
+        hours = int(hours)
+        staff_id = int(staff_id)
+        service_id = int(service_id)
+        # pobieramy wolne dni
+        holidays = [holiday.day for holiday in Holiday.objects.all()]
+        # pobieramy zakres godzin i przekuwamy go na dane potrzebne w forze
+        start_hour = 0
+        end_hour = 8
+        if hours == 1:
+            start_hour = 0
+            end_hour = 4
+        elif hours == 2:
+            start_hour = 4
+            end_hour = 8
+        # if no staff chosen, pobieramy wszystkich lub zgodnie z wyborem, nastęþnie wrzucamy ich do tablicy
+        staff_selection = []
+        if staff_id == 0:
+            staff_selection = [user for user in MyUser.objects.filter(is_staff=True)]
+        else:
+            staff = MyUser.objects.get(pk=staff_id)
+            staff_selection.append(staff)
+
+        # uruchamiamy funkcję zwracającą słownik z nieobecnościami per fryzjer
+        absences = get_absences(staff_selection)
+
+        # uruchamiamy funkcję zwracającą słownik z godzinami zajętymi per fryzjer
+        haircuts = get_haircuts(staff_selection)
+
+        # czas trwania usługi
+        service = Service.objects.get(pk=service_id)
+        service_duration = int(service.duration / 60)
+
+        # uruchamiamy funkcję generującą kalendarz
+        user_calendar = {}
+        for user in staff_selection:
+            user_calendar[user] = get_user_calendar(day_choice,
+                                                    holidays,
+                                                    user,
+                                                    absences,
+                                                    haircuts,
+                                                    start_hour,
+                                                    end_hour,
+                                                    service_duration)
+
+        # split user_calendar into tuples (user, date) in order to order it by dates
+        result_list = []
+        for key, value in user_calendar.items():
+            for date in value:
+                result_list.append((key, date))
+        result_list = sorted(result_list, key=lambda date: date[1])
+
+        #
+        paginator = Paginator(result_list, 10)
+
+        page = request.GET.get('page', 1)
+        try:
+            result = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            result = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            result = paginator.page(paginator.num_pages)
+
+        ctx = {
             'result': result,
             'service': service,
         }
-        return render(request, 'salon/search.html', ctx)
+        return render(request, 'salon/search_result.html', ctx)
 
 
 class ReservationView(LoginRequiredMixin, View):
@@ -380,7 +417,7 @@ class AbsenceListAdd(AdminUserPassesTestMixin, View):
         ctx = {
             'form': form,
             'absence_list': absence_list,
-            'haircuts_list': haircut_list,
+            'haircut_list': haircut_list,
         }
         return render(request, 'salon/absence.html', ctx)
 

@@ -1,23 +1,7 @@
 {% extends './_base.html' %}
 {% load bootstrap3 %}
 
-{% block navstyling %}
-    navbar-static-top
-{% endblock navstyling %}
-
-{% block links %}
-    {% if user.is_staff %}
-    <li><a href="{% url 'salon:main' %}">home</a></li>
-    <li><a href="{% url 'salon:service' %}">usługi</a></li>
-    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
-    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
-    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
-    <li><a href="{% url 'salon:haircut' %}">wizyty</a></li>
-    {% else %}
-    <li><a href="{% url 'salon:customer-edit' user.id %}">edytuj konto</a></li>
-    <li><a href="{% url 'salon:customer-delete' user.id %}">usuń konto</a></li>
-    {% endif %}
-{% endblock links %}
+{% block links %}{% endblock links %}
 
 {% block content %}
     <!--Search - start -->
@@ -55,35 +39,5 @@
             </div>
         </section>
     <!--Search - stop -->
-
-
-
-    <!--Search result - start -->
-    <section id="result">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-                    {% if result %}
-                    <table class="table">
-                        <tr>
-                            <th>Data</th>
-                            <th>Fryzjer</th>
-                            <th></th>
-                        </tr>
-                        {% for el in result %}
-                        <tr>
-                            <td><div><i class="far fa-calendar-alt"></i>{{ el.1|date:"D d.m.y" }}</div>
-                                <div><i class="far fa-clock"></i>{{ el.1|time:"H:i" }}</div></td>
-                            <td>{{ el.0 }}</td>
-                            <td><a href="{% url 'salon:reservation' el.1|date:'c' el.0.id service.id %}">rezerwuj</a></td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--Search result - stop -->
 
 {% endblock content %}

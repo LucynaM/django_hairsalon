@@ -49,7 +49,7 @@ def get_haircuts(users):
     haircuts = {}
     for user in users:
         haircuts[user] = []
-        for haircut in user.services.all():
+        for haircut in user.services.filter(date__gte=datetime.datetime.now()):
             hour_range = int(haircut.service.duration / 60)
             for i in range(0, hour_range):
                 haircuts[user].append(haircut.date.replace(tzinfo=None) + datetime.timedelta(hours=i))

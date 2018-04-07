@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import CustomerCreate, CustomerUpdate, CustomerDelete, \
-    MainPage, LoginView, logout_user, SearchView, ReservationView, \
+    MainPage, LoginView, logout_user, SearchView, ReservationView, SearchResultView,\
     HaircutDelete, HaircutList, \
     SeviceListAdd, ServiceEditDelete, StaffListAdd, StaffEditDelete, \
     AbsenceListAdd, AbsenceEditDelete, HolidayListAdd, HolidayEditDelete
@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', logout_user, name='logout'),
     url(r'^search/$', SearchView.as_view(), name='search'),
+    url(r'^search_result/(?P<day_choice>(\d)+)/(?P<hours>(\d)+)/(?P<staff_id>(\d)+)/(?P<service_id>(\d)+)/$', SearchResultView.as_view(), name='search-result'),
     url(r'^reserve/(?P<date>([a-zA-Z0-9\-:])+)/(?P<user>(\d)+)/(?P<service_id>(\d)+)/$', ReservationView.as_view(),
         name='reservation'),
 

@@ -1,9 +1,14 @@
 /*general - start*/
 
+
 .row.no-gutters > [class^="col-"],
 .row.no-gutters > [class*=" col-"] {
     padding-right: 0;
     padding-left: 0;
+}
+
+h1 {
+    margin-bottom: 5vh;
 }
 
 a, a:hover {
@@ -20,9 +25,13 @@ input[type="date"], input[type="time"], input[type="datetime-local"], input[type
 
 .has-success .control-label,
 .has-success .help-block,
-.has-success .form-control-feedback {
-    color: #357ebd;
-    border-color: #357ebd;
+.has-success .form-control-feedback,
+.has-success .form-control {
+    color: #555;
+}
+
+.has-success .form-control {
+    border-color: #ccc;
 }
 
 .btn-danger {
@@ -67,30 +76,56 @@ th:first-of-type, td:first-of-type {
     left: 0px;
     right: 0px;
     margin: auto;
-    bottom: 15vh;
+    bottom: 5vh;
+    text-align: center;
 }
 #logo img {
     width: 15vw;
     height: auto;
+    margin-bottom: 5vh;
+}
+
+
+#arrow .svg-inline--fa {
+    display: block;
+    color: white;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    margin-top: 15px;
+}
+
+#arrow {
+    position: relative;
+    height: 5vh;
+}
+
+#arrow .svg-inline--fa {
+    -webkit-animation: MoveUpDown 1.5s ease-in infinite;
+    -webkit-animation-direction: alternate;
+    position: absolute;
+}
+
+@keyframes MoveUpDown {
+  0%, 100% {
+    bottom: 0;
+  }
+  50% {
+    bottom: 2.5vh;
+  }
 }
 
 /* header - stop */
 
 /* about - start */
 #about {
-    position: relative;
     text-align: center;
-    height: 50vh;
-
 }
 
 .about-content {
     left: 0px;
     right: 0px;
     margin: auto;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
 }
 /* about - stop */
 
@@ -99,6 +134,7 @@ th:first-of-type, td:first-of-type {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    background-color: #F7F5F5;
     height: 50vh;
 }
 
@@ -181,6 +217,11 @@ th:first-of-type, td:first-of-type {
     box-shadow: 5px 10px 20px lightgray inset;
 }
 
+.form-header-inactive2 {
+    background-color: #F7F5F5;
+    box-shadow: -5px 10px 20px lightgray inset;
+}
+
 .white-backgr {
     background-color: #FAF9F9;
     padding: 45px 25px;
@@ -191,4 +232,25 @@ th:first-of-type, td:first-of-type {
 
 #reserved {
     margin-bottom: 0px;
+}
+
+
+
+@media only screen and (max-width: 768px) {
+    #logo img {
+        width: 25vw;
+    }
+    h1 {
+        font-size: 24px;
+    }
+    h2 {
+        font-size: 22px;
+    }
+    h3 {
+        font-size: 18px;
+    }
+
+    h4 {
+        font-size: 15px;
+    }
 }

@@ -74,6 +74,7 @@ class SearchForm(forms.ModelForm):
     dates = forms.IntegerField(widget=forms.Select(choices=get_dates()), label='Zakres dat')
     hours = forms.IntegerField(widget=forms.Select(choices=HOURS), label='Godziny')
     staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False, label='Fryzjer')
+    service = forms.ModelChoiceField(queryset=Service.objects.all().order_by('name'))
 
     class Meta:
         model = Haircut

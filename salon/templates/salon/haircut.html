@@ -1,18 +1,7 @@
 {% extends './_base.html' %}
 {% load bootstrap3 %}
 
-{% block navstyling %}
-    navbar-static-top
-{% endblock navstyling %}
-
-{% block links %}
-    <li><a href="{% url 'salon:main' %}">home</a></li>
-    <li><a href="{% url 'salon:service' %}">usługi</a></li>
-    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
-    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
-    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
-    <li><a href="{% url 'salon:haircut' %}">wizyty</a></li>
-{% endblock links %}
+{% block links %}{% endblock links %}
 
 {% block content %}
     <!--Search - start -->
@@ -49,7 +38,7 @@
             {% endif %}
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        <div class="jumbotron">
+                        <div class="jumbotron {% if not haircut_list %} table-margin {% endif %}">
                             <h2 class="page-header">Wyszukaj</h2>
                             <form action="" method="post">
                                 {% csrf_token %}

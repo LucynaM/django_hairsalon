@@ -1,23 +1,7 @@
 {% extends './_base.html' %}
 {% load bootstrap3 %}
 
-{% block navstyling %}
-    navbar-static-top
-{% endblock navstyling %}
-
-{% block links %}
-    {% if user.is_staff %}
-    <li><a href="{% url 'salon:main' %}">home</a></li>
-    <li><a href="{% url 'salon:service' %}">usługi</a></li>
-    <li><a href="{% url 'salon:staff' %}">pracownicy</a></li>
-    <li><a href="{% url 'salon:absence' %}">nieobecności</a></li>
-    <li><a href="{% url 'salon:holiday' %}">święta</a></li>
-    <li><a href="{% url 'salon:haircut' %}">wizyty</a></li>
-    {% else %}
-    <li><a href="{% url 'salon:customer-edit' user.id %}">edytuj konto</a></li>
-    <li><a href="{% url 'salon:customer-delete' user.id %}">usuń konto</a></li>
-    {% endif %}
-{% endblock links %}
+{% block links %}{% endblock links %}
 
 {% block content %}
     <!--Haircut-delete - start -->
@@ -25,12 +9,14 @@
 
             <div class="row">
                 <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        <p>Czy na pewno usunąć wizytę u fryzjera "{{ haircut }}"?</p>
-                    <form action="" method="post">{% csrf_token %}
+                    <div class="table-margin jumbotron">
+                        <h4>Czy na pewno usunąć wizytę u fryzjera "{{ haircut }}"?</h4>
+                        <form action="" method="post">{% csrf_token %}
 
-                        <input type="submit" value="Confirm" class="btn btn-danger">
-                    </form>
+                            <input type="submit" value="Confirm" class="btn btn-danger">
+                        </form>
                     </div>
+                </div>
             </div>
         </div>
     <!--Haircut-delete - stop -->

@@ -3,18 +3,23 @@
 
         {% block content %}
         <!--Header - start -->
-        <section id="header">
-            <div id="logo">
+        <section id="header" class="scroll">
+            <div id="logo" class="scroll">
                 <img src="../../static/salon/images/logotyp.svg" alt="">
+                <div id="arrow"><i class="fas fa-angle-down fa-2x"></i></div>
+
             </div>
+
         </section>
         <!--Header - stop -->
 
         <!--About - start -->
         <section id="about">
-            <div class="about-content">
+            <div class="about-content scroll">
+                <div class="table-margin">
                 <h1>Hair salon</h1>
                 <h4>salon fryzjerski dla każdego, profesjonalni fryzjerzy, niebanalne pomysły, zmysł artystyczny</h4>
+                </div>
             </div>
         </section>
         <!--About - stop -->
@@ -22,7 +27,7 @@
         <!--Staff - start -->
         <section id="staff">
             <div class="container-fluid">
-                <div class="row no-gutters staff-row">
+                <div class="row no-gutters staff-row scroll">
                     <div class="col-sm-6 staff-img staff1"></div>
                     <div class="col-sm-6 staff-data staff1">
                         <div class="staff-content">
@@ -31,7 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row no-gutters staff-row">
+                <div class="row no-gutters staff-row scroll">
                     <div class="col-sm-6 staff-data staff2">
                         <div class="staff-content">
                             <h3>{{ staff_list.1|title }}</h3>
@@ -40,7 +45,7 @@
                     </div>
                     <div class="col-sm-6 staff-img staff2"></div>
                 </div>
-                <div class="row no-gutters staff-row">
+                <div class="row no-gutters staff-row scroll">
                     <div class="col-sm-6 staff-img staff3"></div>
                     <div class="col-sm-6 staff-data staff3">
                         <div class="staff-content">
@@ -56,7 +61,7 @@
         <!--Services - start -->
         <section id="services">
             <div class="container">
-                <div class="row">
+                <div class="row scroll">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
                         <div class="table-margin">
                             <table class="table">
@@ -74,13 +79,13 @@
                         </div>
                     </div>
                 </div>
-            </div>>
+            </div>
         </section>
         <!--Services - stop -->
         <!--Contact - start -->
         <section id="contact">
             <div class="container-fluid">
-                <div class="row no-gutters contact-row">
+                <div class="row no-gutters contact-row scroll">
                     <div class="col-sm-6 contact-data">
                         <div class="contact-content">
                             <h3>Adres</h3>

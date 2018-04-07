@@ -1,0 +1,60 @@
+{% extends './_base.html' %}
+{% load bootstrap3 %}
+
+{% block links %}{% endblock links %}
+
+{% block content %}
+
+    <!--Search result - start -->
+    <section id="result">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+                    {% if result %}
+                    <div class="table-margin">
+                    <table class="table">
+                        <tr>
+                            <th>Data</th>
+                            <th>Fryzjer</th>
+                            <th></th>
+                        </tr>
+                        {% for el in result %}
+                        <tr>
+                            <td><div><i class="far fa-calendar-alt"></i>{{ el.1|date:"D d.m.y" }}</div>
+                                <div><i class="far fa-clock"></i>{{ el.1|time:"H:i" }}</div></td>
+                            <td>{{ el.0 }}</td>
+                            <td><a href="{% url 'salon:reservation' el.1|date:'c' el.0.id service.id %}">rezerwuj</a></td>
+                        </tr>
+
+                        {% endfor %}
+                    </table>
+
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if result.has_previous %}
+                                <a href="?page={{ result.previous_page_number }}">previous</a>
+                            {% endif %}
+
+                            <span class="current">
+                                Strona {{ result.number }} z {{ result.paginator.num_pages }}
+                            </span>
+
+                            {% if result.has_next %}
+                                <a href="?page={{ result.next_page_number }}">next</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                    </div>
+                    {% else %}
+                    <div class="table-margin">
+                        <h4>Brak wyników wyszukiwania</h4>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Search result - stop -->
+
+
+{% endblock content %}
