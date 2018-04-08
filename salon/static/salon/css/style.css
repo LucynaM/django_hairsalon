@@ -34,7 +34,7 @@ input[type="date"], input[type="time"], input[type="datetime-local"], input[type
     border-color: #ccc;
 }
 
-.btn-danger {
+.btn:last-child {
     float: right;
 }
 
@@ -48,6 +48,10 @@ input[type="date"], input[type="time"], input[type="datetime-local"], input[type
 
 .add-margin {
     margin: 7vh 0;
+}
+
+.address {
+    margin: 3vh 0;
 }
 
 th:last-child, td:last-child {
@@ -243,7 +247,17 @@ th:first-of-type, td:first-of-type {
     margin-bottom: 0px;
 }
 
+/* Table in haircut-list - start*/
+.row-inactive {
+    display: none;
+}
+td[colspan='4'] {
+    background-color: #F7F6F6;
+    box-shadow: -5px 10px 20px #F7F5F5 inset;
+}
+/* Table in haircut-list - start*/
 
+/* Responsive layout - start */
 
 @media only screen and (max-width: 768px) {
     #logo img {
@@ -263,3 +277,5 @@ th:first-of-type, td:first-of-type {
         font-size: 15px;
     }
 }
+
+/* Responsive layout - stop*/

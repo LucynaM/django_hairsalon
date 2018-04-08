@@ -11,30 +11,24 @@
             <div class="container">
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
-                        {% if haircuts and not user.is_staff %}
+                        {% if haircut %}
                             <div class="table-margin">
                                 <table id="reserved" class="table ">
                                     <tr>
                                         <th>wizyta</th>
+                                        <th>klient</th>
+                                        <th>telefon</th>
                                         <th></th>
                                     </tr>
-                                {% for haircut in haircuts %}
                                     <tr>
-                                        <td>{{ haircut }}</td>
+                                        <td><div><i class="far fa-calendar-alt"></i>{{ haircut.date|date:"D d.m.y" }}</div>
+                                            <div><i class="far fa-clock"></i>{{ haircut.date|time:"H:i" }}</div></td>
+                                        <td>{{ haircut.non_online_customer.name }}</td>
+                                        <td>{{ haircut.non_online_customer.phone }}</td>
                                         <td><a href="{% url 'salon:haircut-delete' haircut.pk %}">odwołaj</a></td>
                                     </tr>
-                                {% endfor %}
                                 </table>
                             </div>
-                        {% else %}
-                        <div class="table-margin jumbotron">
-                        <h2 class="page-header">Wyszukaj termin</h2>
-                        <form action="" method="post" >
-                            {% csrf_token %}
-                            {% bootstrap_form form %}
-                            <input type="submit" name="submit" value="send" class="btn btn-primary">
-                        </form>
-                        </div>
                         {% endif %}
                     </div>
                 </div>

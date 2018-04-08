@@ -1,34 +1,43 @@
 {% extends './_base.html' %}
 {% load bootstrap3 %}
 
-{% block links %}{% endblock links %}
+{% block links %}
+    <li><a href="{% url 'salon:main' %}">home</a></li>
+{% endblock links %}
 
 {% block content %}
     <!--Search - start -->
-    <section id="search">
+    <section id="haircut-list">
             <div class="container">
                 {% if haircut_list %}
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
                         <div class="table-margin">
+                            <h2>{{ haircut_list.0.date|date:"D d.m.y" }}</h2>
                             <table class="table">
                                 <tr>
                                     <th>Wizyta</th>
-                                    <th>Klient</th>
-                                    <th>Telefon</th>
+                                    <th>Pracownik</th>
+                                    <th>Usługa</th>
                                     <th></th>
                                 </tr>
                             {% for haircut in haircut_list %}
-                                <tr>
-                                    <td>{{ haircut }}</td>
-                                    {% if haircut.customer.is_staff %}
-                                    <td>{{ haircut.non_online_customer.name }}</td>
-                                    <td>{{ haircut.non_online_customer.phone }}</td>
-                                    {% else %}
-                                    <td>{{ haircut.customer }}</td>
-                                    <td>{{ haircut.customer.phone }}</td>
-                                    {% endif %}
+                                <tr class="row-active">
+                                    <td>{{ haircut.date|time:"H:i" }}</td>
+                                    <td>{{ haircut.staff }}</td>
+                                    <td>{{ haircut.service }}</td>
                                     <td><a href="{% url 'salon:haircut-delete' haircut.pk %}">delete</a></td>
+                                </tr>
+                                <tr class="row-inactive">
+                                    <td colspan="4">
+                                    {% if haircut.customer.is_staff %}
+                                        Klient:  {{ haircut.non_online_customer.name }},
+                                        tel.:  {{ haircut.non_online_customer.phone }}
+                                    {% else %}
+                                        Klient:  {{ haircut.customer }},
+                                        tel.:  {{ haircut.customer.phone }}
+                                    {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </table>

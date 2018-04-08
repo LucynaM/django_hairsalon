@@ -224,9 +224,20 @@ class ReservationView(LoginRequiredMixin, View):
                 non_online_customer = form.save()
             new_haircut['non_online_customer'] = non_online_customer
 
-        Haircut.objects.create(**new_haircut)
+        haircut = Haircut.objects.create(**new_haircut)
+
+        if request.user.is_staff:
+            return redirect('salon:reservation-confirmation', haircut.id)
 
         return redirect('salon:search')
+
+class ReservationConfirmation(View):
+    def get(self, request, haircut_id):
+        haircut = Haircut.objects.get(pk=haircut_id)
+        ctx = {
+            'haircut': haircut,
+        }
+        return render(request, 'salon/resevation-confirmation.html', ctx)
 
 
 class CustomerDelete(View):
@@ -525,7 +536,7 @@ class HaircutList(AdminUserPassesTestMixin, View):
 
     def get_day_haircuts(self, start, end, **kwargs):
         haircut_list = []
-        for haircut in Haircut.objects.filter(date__range=(start, end), **kwargs):
+        for haircut in Haircut.objects.filter(date__range=(start, end), **kwargs).order_by('staff', 'date'):
             haircut_list.append(haircut)
         return haircut_list
 

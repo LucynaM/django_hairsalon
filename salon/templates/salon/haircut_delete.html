@@ -1,7 +1,9 @@
 {% extends './_base.html' %}
 {% load bootstrap3 %}
 
-{% block links %}{% endblock links %}
+{% block links %}
+    <li><a href="{% url 'salon:main' %}">home</a></li>
+{% endblock links %}
 
 {% block content %}
     <!--Haircut-delete - start -->

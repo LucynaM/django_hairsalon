@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from .views import CustomerCreate, CustomerUpdate, CustomerDelete, \
     MainPage, LoginView, logout_user, SearchView, ReservationView, SearchResultView,\
-    HaircutDelete, HaircutList, \
+    HaircutDelete, HaircutList, ReservationConfirmation, \
     SeviceListAdd, ServiceEditDelete, StaffListAdd, StaffEditDelete, \
     AbsenceListAdd, AbsenceEditDelete, HolidayListAdd, HolidayEditDelete
 
@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^absence/edit/(?P<pk>[0-9]+)/$', AbsenceEditDelete.as_view(), name='absence-edit'),
     url(r'^holiday/edit/(?P<pk>[0-9]+)/$', HolidayEditDelete.as_view(), name='holiday-edit'),
     url(r'^haircut/delete/(?P<pk>[0-9]+)/$', HaircutDelete.as_view(), name='haircut-delete'),
+    url(r'^reservation-confirmation/(?P<haircut_id>[0-9]+)/$', ReservationConfirmation.as_view(), name='reservation-confirmation'),
 ]

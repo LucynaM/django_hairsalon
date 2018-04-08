@@ -5,7 +5,6 @@ $(document).ready(function(){
         const windowWidth = $(window).width();
         const staff = $('.staff2');
         const staff_row = $('.staff-row').eq(1);
-        console.log(windowWidth);
         if (windowWidth < 757) {
             if (staff.eq(0).hasClass('staff-data')) {
                 staff_row.html("");
@@ -36,6 +35,13 @@ $(document).ready(function(){
     });
 
     /* switch page elements - start */
+
+    /* haircut-list table - dispaly second row on click - start */
+    $('#haircut-list').on('click', '.row-active', function() {
+        console.log('klikam');
+        $(this).next().toggle();
+    });
+    /* haircut-list table - dispaly second row on click - stop */
 
     /*smooth-scrolling - start*/
 
