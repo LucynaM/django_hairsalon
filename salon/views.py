@@ -173,7 +173,7 @@ class SearchResultView(LoginRequiredMixin, View):
         result_list = sorted(result_list, key=lambda date: date[1])
 
         #
-        paginator = Paginator(result_list, 10)
+        paginator = Paginator(result_list, 6)
 
         page = request.GET.get('page', 1)
         try:
@@ -493,6 +493,7 @@ class HolidayEditDelete(AdminUserPassesTestMixin, View):
 
     def get(self, request, pk):
         holiday = Holiday.objects.get(pk=pk)
+        holiday.day = holiday.day.strftime('%Y-%m-%d')
         form = HolidayForm(instance=holiday)
         ctx = {
             'form': form,

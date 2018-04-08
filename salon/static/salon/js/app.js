@@ -31,14 +31,13 @@ $(document).ready(function(){
         if(this.resizeTO) clearTimeout(this.resizeTO);
         this.resizeTO = setTimeout(function() {
             $(this).trigger('resizeEnd');
-        }, 500);
+        }, 300);
     });
 
     /* switch page elements - start */
 
     /* haircut-list table - dispaly second row on click - start */
     $('#haircut-list').on('click', '.row-active', function() {
-        console.log('klikam');
         $(this).next().toggle();
     });
     /* haircut-list table - dispaly second row on click - stop */

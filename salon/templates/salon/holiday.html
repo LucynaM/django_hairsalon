@@ -15,10 +15,12 @@
                             <table class="table">
                                 <tr>
                                     <th>Dzień</th>
+                                    <th></th>
                                 </tr>
                             {% for holiday in holiday_list %}
                                 <tr>
                                     <td>{{ holiday }}</td>
+                                    <td><a href="{% url 'salon:holiday-edit' holiday.id %}">edytuj</a></td>
                                 </tr>
                             {% empty %}
                                 <p>Brak świąt</p>

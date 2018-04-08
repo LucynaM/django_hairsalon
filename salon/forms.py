@@ -28,7 +28,7 @@ class StaffForm(CustomerForm):
         model = MyUser
         fields = ['username', 'password', 'password2', 'first_name', 'last_name', 'email', 'phone', 'about']
         widgets = {
-            'about': forms.Textarea(attrs={'cols': 80}),
+            'about': forms.Textarea(attrs={'rows':5, 'cols': 80}),
         }
         help_texts = {
             'username': '',
@@ -49,7 +49,7 @@ class StaffUpdateForm(forms.ModelForm):
         model = MyUser
         fields = ['username', 'first_name', 'last_name', 'email', 'phone', 'about']
         widgets = {
-            'about': forms.Textarea(attrs={'cols': 80}),
+            'about': forms.Textarea(attrs={'rows':5, 'cols': 80}),
         }
         help_texts = {
             'username': '',
@@ -97,7 +97,7 @@ class ServiceForm(forms.ModelForm):
         model = Service
         fields = '__all__'
         widgets = {
-            'description': forms.Textarea(),
+            'description': forms.Textarea(attrs={'rows':4, 'cols': 80}),
         }
 
 
