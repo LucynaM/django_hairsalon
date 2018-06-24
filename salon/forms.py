@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import MyUser, Service, Haircut, Holiday, Comment, Absence, NonOnlineCustomer
+from .models import MyUser, Service, Holiday, NonOnlineCustomer
 from .dates_handling import get_dates
 
 
@@ -70,15 +70,12 @@ HOURS = (
 
 # haircut management
 
-class SearchForm(forms.ModelForm):
-    dates = forms.IntegerField(widget=forms.Select(choices=get_dates()), label='Zakres dat')
-    hours = forms.IntegerField(widget=forms.Select(choices=HOURS), label='Godziny')
-    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False, label='Fryzjer')
+class SearchForm(forms.Form):
     service = forms.ModelChoiceField(queryset=Service.objects.all().order_by('name'))
+    staff = forms.ModelChoiceField(queryset=MyUser.objects.filter(is_staff=True), required=False, label='Fryzjer')
+    #dates = forms.IntegerField(widget=forms.Select(choices=get_dates()), label='Zakres dat')
+    hours = forms.IntegerField(widget=forms.Select(choices=HOURS), label='Godziny')
 
-    class Meta:
-        model = Haircut
-        fields = ['service', 'staff', 'dates', 'hours']
 
 
 class ReservationForm(forms.ModelForm):

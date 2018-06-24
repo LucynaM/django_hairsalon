@@ -32,6 +32,14 @@
                         <form action="" method="post" >
                             {% csrf_token %}
                             {% bootstrap_form form %}
+                            <!--<select name="" id=""></select>-->
+                            <div class="form-group"><label for="id-dates" class="control-label">Zakres dat</label>
+                                <select name="dates" id="id-dates" class="form-control">
+                                    {% for date in dates %}
+                                    <option value="{{date.0}}">{{date.1}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                             <input type="submit" name="submit" value="send" class="btn btn-primary">
                         </form>
                         </div>

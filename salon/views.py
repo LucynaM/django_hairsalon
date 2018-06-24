@@ -6,12 +6,13 @@ from django.http import Http404
 from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
 from datetime import datetime
 
 from .forms import HolidayForm, AbsenceForm, CustomerForm, StaffForm, CustomerUpdateForm, StaffUpdateForm, LoginForm, \
     SearchForm, ServiceForm, HolidayForm, ReservationForm, HaircutSearchForm
 from .models import MyUser, Service, Haircut, Absence, Holiday, NonOnlineCustomer
-from .dates_handling import get_absences, get_absence_days, get_haircuts, get_user_calendar, return_date
+from .dates_handling import get_absences, get_absence_days, get_haircuts, get_user_calendar, return_date, get_dates
 
 
 def check_user(obj, request):
@@ -83,9 +84,12 @@ class SearchView(LoginRequiredMixin, View):
         user = MyUser.objects.get(pk=request.user.id)
         haircuts = Haircut.objects.filter(customer=user).exclude(date__lte=datetime.now())
         form = SearchForm()
+        dates = get_dates()
+
         ctx = {
             'haircuts': haircuts,
             'form': form,
+            'dates': dates,
         }
         return render(request, 'salon/search.html', ctx)
 
@@ -93,11 +97,8 @@ class SearchView(LoginRequiredMixin, View):
         form = SearchForm(request.POST)
 
         if form.is_valid():
-
-            day_choice = form.cleaned_data['dates']
-
+            day_choice = request.POST['dates']
             hours = form.cleaned_data['hours']
-
             staff_id = 0
             staff = form.cleaned_data['staff']
             if staff:
@@ -120,13 +121,17 @@ class SearchView(LoginRequiredMixin, View):
 class SearchResultView(LoginRequiredMixin, View):
 
     def get(self, request, day_choice, hours, staff_id, service_id):
+
+        # process get parameters
         day_choice = int(day_choice)
         hours = int(hours)
         staff_id = int(staff_id)
         service_id = int(service_id)
-        # pobieramy wolne dni
+
+        # retrieving holidays
         holidays = [holiday.day for holiday in Holiday.objects.all()]
-        # pobieramy zakres godzin i przekuwamy go na dane potrzebne w forze
+
+        # get hour range to search only selected hours
         start_hour = 0
         end_hour = 8
         if hours == 1:
@@ -135,7 +140,8 @@ class SearchResultView(LoginRequiredMixin, View):
         elif hours == 2:
             start_hour = 4
             end_hour = 8
-        # if no staff chosen, pobieramy wszystkich lub zgodnie z wyborem, nastęþnie wrzucamy ich do tablicy
+
+        # get staff, if no one chosen, get all staff members, else - selected one
         staff_selection = []
         if staff_id == 0:
             staff_selection = [user for user in MyUser.objects.filter(is_staff=True)]
@@ -143,17 +149,17 @@ class SearchResultView(LoginRequiredMixin, View):
             staff = MyUser.objects.get(pk=staff_id)
             staff_selection.append(staff)
 
-        # uruchamiamy funkcję zwracającą słownik z nieobecnościami per fryzjer
+        # get dictionary of absences per staff member
         absences = get_absences(staff_selection)
 
-        # uruchamiamy funkcję zwracającą słownik z godzinami zajętymi per fryzjer
+        # get dictionary of haircuts  per staff member
         haircuts = get_haircuts(staff_selection)
 
-        # czas trwania usługi
+        # get service duration
         service = Service.objects.get(pk=service_id)
         service_duration = int(service.duration / 60)
 
-        # uruchamiamy funkcję generującą kalendarz
+        # get dictionary of free hours per staff member
         user_calendar = {}
         for user in staff_selection:
             user_calendar[user] = get_user_calendar(day_choice,
@@ -172,7 +178,7 @@ class SearchResultView(LoginRequiredMixin, View):
                 result_list.append((key, date))
         result_list = sorted(result_list, key=lambda date: date[1])
 
-        #
+        # present split result list in pages
         paginator = Paginator(result_list, 6)
 
         page = request.GET.get('page', 1)
