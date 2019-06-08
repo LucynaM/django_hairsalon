@@ -6,7 +6,7 @@ from .views import CustomerCreate, CustomerUpdate, CustomerDelete, \
     AbsenceListAdd, AbsenceEditDelete, HolidayListAdd, HolidayEditDelete
 
 urlpatterns = [
-    url(r'^main/$', MainPage.as_view(), name='main'),
+    url(r'^$', MainPage.as_view(), name='main'),
 
     url(r'^customer/delete/(?P<pk>[0-9]+)/$', CustomerDelete.as_view(), name='customer-delete'),
     url(r'^customer/add/$', CustomerCreate.as_view(), name='customer-add'),
