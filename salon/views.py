@@ -6,7 +6,6 @@ from django.http import Http404
 from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-
 from datetime import datetime
 
 from .forms import HolidayForm, AbsenceForm, CustomerForm, StaffForm, CustomerUpdateForm, StaffUpdateForm, LoginForm, \
@@ -30,7 +29,7 @@ class AdminUserPassesTestMixin(UserPassesTestMixin):
 
 
 class MainPage(View):
-    # serve main page info
+    """show main page"""
     def get(self, request):
         staff_list = MyUser.objects.filter(is_staff=True)
         service_list = Service.objects.all().order_by('name')
@@ -79,7 +78,7 @@ def logout_user(request):
 
 
 class SearchView(LoginRequiredMixin, View):
-
+    """Search for available dates"""
     def get(self, request):
         user = MyUser.objects.get(pk=request.user.id)
         haircuts = Haircut.objects.filter(customer=user).exclude(date__lte=datetime.now())
@@ -430,18 +429,15 @@ class AbsenceListAdd(AdminUserPassesTestMixin, View):
         form = AbsenceForm(request.POST)
         if form.is_valid():
             absence = Absence.objects.create(**form.cleaned_data)
-        # check list of staff haircuts when new absence is added
+
         haircuts = Haircut.objects.filter(staff=absence.staff).exclude(date__lte=datetime.now())
-        haircut_list = []
-        for haircut in haircuts:
-            if haircut.date.date() in get_absence_days(absence):
-                haircut_list.append(haircut)
         absence_list = Absence.objects.filter(end__gte=datetime.now().date())
 
         ctx = {
             'form': form,
             'absence_list': absence_list,
-            'haircut_list': haircut_list,
+            # check list of staff haircuts when new absence is added
+            'haircut_list': (haircut for haircut in haircuts if haircut.date.date() in get_absence_days(absence)),
         }
         return render(request, 'salon/absence.html', ctx)
 
@@ -542,10 +538,8 @@ class HaircutDelete(View):
 class HaircutList(AdminUserPassesTestMixin, View):
 
     def get_day_haircuts(self, start, end, **kwargs):
-        haircut_list = []
         for haircut in Haircut.objects.filter(date__range=(start, end), **kwargs).order_by('staff', 'date'):
-            haircut_list.append(haircut)
-        return haircut_list
+            yield haircut
 
     def get(self, request):
         start = datetime.now().replace(hour=11, minute=00, second=00, microsecond=000000)
