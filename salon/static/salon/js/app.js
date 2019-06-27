@@ -1,37 +1,43 @@
 $(document).ready(function(){
 
 
-    /* change order of image and staff presentation box depending on screen width */
-    function changeOrderOfLaoutElements() {
+    /* change order of image and staff presentation depending on screen width */
+    class LayoutImgChanges {
+        constructor() {
+            this.changeOrder();
+            window.addEventListener('resize', this.changeOrder);
 
-        const imagesToChangePosition = $('.staff-img');
-        const staffRow = $('.staff-row');
-        const windowWidthCondition = window.innerWidth < 768;
+        }
+        changeOrder() {
+            const imagesToChangePosition = [...document.querySelectorAll('.staff-img')];
+            const staffRow = [...document.querySelectorAll('.staff-row')];
+            const windowWidthCondition = window.innerWidth < 768;
 
-        if (windowWidthCondition) {
-            staffRow.each(function(index) {
-                if (index % 2 !== 0) {
-                    $(this).find(".staff-img").remove();
-                    $(this).prepend(imagesToChangePosition[index]);
-                }
-            })
+            if (windowWidthCondition) {
+                staffRow.forEach((row, index) => {
+                    if (index % 2 !== 0) {
+                        const elemToRemove = row.querySelector(".staff-img");
+                        row.removeChild(elemToRemove);
+                        row.prepend(imagesToChangePosition[index]);
+                    }
+                })
+            } else  {
+                staffRow.forEach((row, index) => {
+                    if (index % 2 !== 0 && row.children[0].classList.contains('staff-img')) {
+                        const elemToRemove = row.children[0];
+                        row.removeChild(elemToRemove);
+                        row.append(imagesToChangePosition[index]);
+                    }
+                })
+            }
 
-        } else  {
-            staffRow.each(function(index) {
-                if (index % 2 !== 0 && $(this).children().eq(0).hasClass('staff-img')) {
-                    $(this).children().eq(0).remove();
-                    $(this).append(imagesToChangePosition[index]);
-                }
-            })
         }
     };
 
-    changeOrderOfLaoutElements();
-
-    $(window).resize(changeOrderOfLaoutElements);
+    const imageSwitch = new LayoutImgChanges();
 
 
-    /* haircut-list table - dispaly second row on click */
+    /* haircut-list table - display second row on click */
     $('#haircut-list').on('click', '.row-active', function() {
         $(this).next().toggle();
     });
@@ -40,7 +46,6 @@ $(document).ready(function(){
     /* smooth-scrolling */
 
 	$("a[href^='#']").click(function(){
-
 		var href = $(this).attr("href");
 		$("html, body").animate({scrollTop: $(href).offset().top - 49}, 500);
 
