@@ -261,6 +261,10 @@ th:first-of-type, td:first-of-type {
 }
 
 /* Table in haircut-list - start*/
+.row-active {
+    cursor: pointer;
+}
+
 .row-inactive {
     display: none;
 }

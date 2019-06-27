@@ -44,7 +44,9 @@
                         </div>
                     </div>
                 </div>
-            {% endif %}
+                {% else %}
+                <p>Brak wizyt</p>
+                {% endif %}
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
                         <div class="jumbotron {% if not haircut_list %} table-margin {% endif %}">

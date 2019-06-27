@@ -12,20 +12,24 @@
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
                         <div class="table-margin">
-                            <table class="table">
-                                <tr>
-                                    <th>Dzień</th>
-                                    <th></th>
-                                </tr>
-                            {% for holiday in holiday_list %}
-                                <tr>
-                                    <td>{{ holiday }}</td>
-                                    <td><a href="{% url 'salon:holiday-edit' holiday.id %}">edytuj</a></td>
-                                </tr>
-                            {% empty %}
-                                <p>Brak świąt</p>
-                            {% endfor %}
-                            </table>
+                            {% if holiday_list %}
+                                <table class="table">
+                                    <tr>
+                                        <th>Dzień</th>
+                                        <th></th>
+                                    </tr>
+                                {% for holiday in holiday_list %}
+                                    <tr>
+                                        <td>{{ holiday }}</td>
+                                        <td><a href="{% url 'salon:holiday-edit' holiday.id %}">edytuj</a></td>
+                                    </tr>
+                                {% empty %}
+                                    <p>Brak świąt</p>
+                                {% endfor %}
+                                </table>
+                            {% else %}
+                            <p>Brak świąt</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

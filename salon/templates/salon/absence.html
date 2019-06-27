@@ -12,6 +12,7 @@
                 <div class="row">
                     <div class='col-xs-12 col-sm-6 col-sm-offset-3'>
                         <div class="table-margin">
+                            {% if absence_list %}
                             <table class="table">
                                 <tr>
                                     <th>Nieobecność</th>
@@ -24,10 +25,11 @@
                                     <td>{{ absence.staff }}</td>
                                     <td><a href="{% url 'salon:absence-edit' absence.pk %}">edytuj</a></td>
                                 </tr>
-                            {% empty %}
-                                <p>Brak nieobecności</p>
                             {% endfor %}
                             </table>
+                            {% else %}
+                            <p>Brak nieobecności</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
